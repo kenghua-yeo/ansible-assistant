@@ -1,0 +1,33 @@
+---
+__timesync_chrony_version: "{{ ansible_facts.packages['chrony'][0].version | default('0') if 'chrony' in ansible_facts.packages else '0' }}"
+__timesync_ntp_version: "{{ ansible_facts.packages['ntp'][0].version | default('0') if 'ntp' in ansible_facts.packages else '0' }}"
+
+# ansible_facts required by the role
+__timesync_required_facts:
+  - distribution
+  - distribution_major_version
+  - distribution_version
+  - os_family
+
+# the subsets of ansible_facts that need to be gathered in case any of the
+# facts in required_facts is missing; see the documentation of
+# the 'gather_subset' parameter of the 'setup' module
+__timesync_required_facts_subsets: "{{ ['!all', '!min'] + __timesync_required_facts }}"
+
+# BEGIN - DO NOT EDIT THIS BLOCK - rh distros variables
+# Ansible distribution identifiers that the role treats like RHEL
+__timesync_rh_distros:
+  - AlmaLinux
+  - CentOS
+  - RedHat
+  - Rocky
+
+# Same as above but includes Fedora
+__timesync_rh_distros_fedora: "{{ __timesync_rh_distros + ['Fedora'] }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone
+__timesync_is_rh_distro: "{{ ansible_facts['distribution'] in __timesync_rh_distros }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone, or Fedora
+__timesync_is_rh_distro_fedora: "{{ ansible_facts['distribution'] in __timesync_rh_distros_fedora }}"
+# END - DO NOT EDIT THIS BLOCK - rh distros variables

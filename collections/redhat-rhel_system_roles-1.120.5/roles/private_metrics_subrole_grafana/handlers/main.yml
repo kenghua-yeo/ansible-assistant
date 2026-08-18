@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: MIT
+---
+
+- name: Restart grafana
+  service:
+    name: grafana-server
+    state: restarted
+  when: __grafana_is_booted | bool

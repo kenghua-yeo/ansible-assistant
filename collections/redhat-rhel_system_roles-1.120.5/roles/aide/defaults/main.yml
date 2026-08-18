@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: MIT
+---
+# Here is the right place to put the role's input variables.
+# This file also serves as a documentation for such a variables.
+
+# Path to template file
+aide_config_template:
+
+# Examples of role input variables:
+aide_db_fetch_dir: files
+
+# Enable initialization of the database phase
+aide_init: false
+
+# Fetch db
+aide_fetch_db: false
+
+# Enable check database phase
+aide_check: false
+
+# Enable database update phase
+aide_update: false
+
+# Enable periodic check
+aide_cron_check:
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  *
+# Set cron check interval
+aide_cron_interval: "0 12 * * *"

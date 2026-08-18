@@ -1,0 +1,62 @@
+---
+- name: Create a directory for drop-in configuration snippets
+  ansible.builtin.file:
+    path: "{{ sshd_config_file | dirname }}"
+    state: directory
+    mode: "{{ sshd_drop_in_dir_mode }}"
+  when:
+    - sshd_main_config_file is not none
+    - sshd_config_file | dirname == sshd_main_config_file ~ '.d'
+
+- name: Create the complete configuration file
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: "{{ sshd_config_file }}"
+    owner: "{{ sshd_config_owner }}"
+    group: "{{ sshd_config_group }}"
+    mode: "{{ sshd_config_mode }}"
+    validate: >-
+      {% if not __sshd_supports_validate %}
+        true %s
+      {% elif sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
+        {{ sshd_binary | quote }} -t -f %s -h {{ sshd_test_hostkey.path | quote }}/rsa_key
+      {% else %}
+        {{ sshd_binary | quote }} -t -f %s
+      {% endif %}
+    backup: "{{ sshd_backup }}"
+  notify: sshd_reload
+  register: __sshd_config_result
+
+- name: Notify systemd to reload daemon and restart the service
+  ansible.builtin.assert: {that: true, quiet: true}
+  changed_when: true
+  when:
+    - __sshd_config_result is changed
+    - not __sshd_socket_accept
+    - __sshd_listen_addresses_from_config != '["0.0.0.0", "[::]"]' or __sshd_ports_from_config != "[22]"
+  notify:
+    - sshd_daemon_reload
+    - sshd_restart
+    - sshd_socket_restart
+
+- name: Make sure the include path is present in the main sshd_config
+  ansible.builtin.lineinfile:
+    insertbefore: BOF
+    line: "Include {{ sshd_config_file | dirname }}/*.conf"
+    path: "{{ sshd_main_config_file }}"
+    owner: "{{ sshd_config_owner }}"
+    group: "{{ sshd_config_group }}"
+    mode: "{{ sshd_config_mode }}"
+    validate: >-
+      {% if not __sshd_supports_validate %}
+        true %s
+      {% elif sshd_test_hostkey is defined and sshd_test_hostkey.path is defined %}
+        {{ sshd_binary | quote }} -t -f %s -h {{ sshd_test_hostkey.path | quote }}/rsa_key
+      {% else %}
+        {{ sshd_binary | quote }} -t -f %s
+      {% endif %}
+    backup: "{{ sshd_backup }}"
+  notify: sshd_reload
+  when:
+    - sshd_main_config_file is not none
+    - sshd_config_file | dirname == sshd_main_config_file ~ '.d'

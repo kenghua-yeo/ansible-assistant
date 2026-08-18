@@ -1,0 +1,158 @@
+---
+- name: Ensure ansible_facts required by role
+  include_tasks: set_facts.yml
+
+# Distribution defaults are different from the postfix defaults, hence need to
+# reinstall the package
+- name: Remove postfix package(s) to restore config {{ __postfix_packages }}
+  when:
+    - postfix_conf.previous is defined
+    - postfix_conf.previous == "replaced"
+    - not __postfix_is_ostree
+  block:
+  # It is assumed that the only package providing config files that might
+  # be modified is postfix - if this is not so, then additional
+  # packages need to be added to this check
+    - name: Get status of package(s) {{ __postfix_packages }}
+      command: rpm -V {{ item }} # noqa command-instead-of-module
+      loop: "{{ __postfix_packages }}"
+      register: __postfix_packages_status
+      failed_when: false
+      changed_when: false
+
+    - name: Remove package(s) to reset original confs {{ __postfix_packages }}
+      package:
+        name: "{{ __postfix_packages }}"
+        state: absent
+      register: __postfix_erased
+      when: __postfix_packages_status.results | rejectattr('stdout', 'match', '^package .* is not installed') | selectattr('stdout', 'search', ' /etc/postfix/.*[.]cf($|\n)') | list | length > 0
+
+- name: Remove configuration for replacement
+  when:
+    - postfix_conf.previous | d() == "replaced"
+    - __postfix_is_ostree | d(false)
+  block:
+  # It is assumed that the only package providing config files that might
+  # be modified is postfix - if this is not so, then additional
+  # packages need to be added to this check
+    - name: Get status of config files
+      command: rpm -V --nomtime {{ item }} # noqa command-instead-of-module
+      loop: "{{ __postfix_packages }}"
+      register: __postfix_packages_status
+      failed_when: false
+      changed_when: false
+
+    - name: Remove config files - make empty
+      copy:
+        dest: "{{ item }}"
+        content: "\n" # to make postconf -e happy
+        mode: preserve
+      loop: "{{ mod_cf_files }}"
+      vars:
+        mod_cf_files: "{{ __postfix_packages_status.results | map(attribute='stdout') | map('default', '') | map('regex_findall', ' (/etc/postfix/.*[.]cf)(?:$|\n)') | select | flatten | list }}"
+
+- name: Configure firewall
+  include_tasks: firewall.yml
+
+- name: Configure selinux
+  include_tasks: selinux.yml
+
+- name: Install Postfix
+  package:
+    name: "{{ __postfix_packages }}"
+    state: present
+    use: "{{ (__postfix_is_ostree | d(false)) | ternary('redhat.rhel_system_roles.rhel_rpm_ostree', omit) }}"
+
+- name: Check for IPv6 enabled
+  vars:
+    ipv6_err: >-
+      postconf: fatal: parameter inet_interfaces: no local interface found for ::1
+  block:
+    - name: Get default database type from postconf - 1
+      command: postconf -h default_database_type
+      changed_when: false
+      register: __postfix_register_dbtype
+      failed_when:
+        - __postfix_register_dbtype is failed
+        - __postfix_register_dbtype.stderr is not search(ipv6_err)
+
+    - name: Configure postfix for no ipv6
+      include_tasks: manage_config.yml
+      vars:
+        __postfix_conf:
+          inet_protocols: ipv4
+        __postfix_has_config_changed: True itemstr inet_protocols
+      when:
+        - __postfix_register_dbtype.rc == 1
+        - __postfix_register_dbtype.stderr is search(ipv6_err)
+
+- name: Get default database type from postconf - 2
+  command: postconf -h default_database_type
+  changed_when: false
+  register: __postfix_register_dbtype
+
+- name: Set postfix_default_database_type
+  set_fact:
+    postfix_default_database_type: "{{ __postfix_register_dbtype.stdout | trim }}"
+
+- name: Enable Postfix
+  service:
+    name: postfix
+    state: started
+    enabled: true
+
+- name: Get current config
+  command: postconf
+  register: __postfix_register_config
+  changed_when: false
+  when: postfix_conf | dict2items | rejectattr('key', 'match', '^previous$') | list | items2dict | d({}) | length > 0
+
+- name: Check given config against current config
+  changed_when: false
+  when:
+    - postfix_conf | dict2items | rejectattr('key', 'match', '^previous$') | list | items2dict | d({}) | length > 0
+    - __postfix_register_config is defined
+    - __postfix_register_config.stdout_lines is defined
+  set_fact:
+    __postfix_has_config_changed: |-
+      {% for key, val in postfix_conf.items() %}
+      {%   if key != 'previous' %}
+      {%     set space = ' ' if val else '' %}
+      {%     set itemstr = '{} ={}{}'.format(key, space, val) %}
+      {%     if itemstr not in __postfix_register_config.stdout_lines %}
+      True itemstr {{ itemstr }} is not in __postfix_register_config
+      {%     endif %}
+      {%   endif %}
+      {% endfor %}
+
+- name: Configure additional files
+  copy:
+    content: "{{ file['content'] }}"
+    dest: /etc/postfix/{{ file['name'] }}
+    owner: root
+    group: root
+    mode: '0640'
+  loop: "{{ postfix_files }}"
+  register: __postfix_postmap_files
+  no_log: true
+  loop_control:
+    loop_var: file
+  notify:
+    - Check postfix
+    - Restart postfix
+
+- name: Postmap files
+  command: postmap {{ result["dest"] | quote }}
+  when:
+    - result["changed"]
+    - result["file"]["postmap"] | d(false)
+  no_log: true
+  changed_when: true
+  loop: "{{ __postfix_postmap_files['results'] }}"
+  loop_control:
+    loop_var: result
+
+- name: Apply changes
+  include_tasks: manage_config.yml
+  vars:
+    __postfix_conf: "{{ postfix_conf }}"

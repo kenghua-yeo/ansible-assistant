@@ -1,0 +1,29 @@
+---
+customized_ami_operation: create
+customized_ami_source_ami_filters:
+  architecture: x86_64
+  virtualization-type: hvm
+  root-device-type: ebs
+  # CentOS Community Platform Engineering (CPE)
+  owner-id: "125523088429"
+  # Avoid ELN/Rawhide; match current Fedora 4x cloud images
+  name: Fedora-Cloud-Base-*.x86_64-4*
+customized_ami_source_ami_user_name: fedora
+
+customized_ami_vpc_cidr: 10.1.0.0/16
+customized_ami_subnet_cidr: 10.1.0.0/24
+customized_ami_ec2_instance_name: "{{ customized_ami_name }}-ec2"
+customized_ami_ec2_instance_type: t2.large
+
+customized_ami_resource_tags:
+  role: customized_ami
+  customized_ami_name: "{{ custom_ami_name }}"
+
+customized_ami_vpc_name: "vpc-{{ customized_ami_name }}"
+customized_ami_security_group: "security-{{ customized_ami_name }}"
+customized_ami_key_name: "key-{{ customized_ami_name }}"
+customized_ami_public_key_file: ~/.ssh/id_rsa.pub
+customized_ami_private_key_file: ~/.ssh/id_rsa
+customized_ami_security_group_desc: "Security group allowing SSH connection to EC2 instance"
+
+customized_ami_recreate_if_exists: false

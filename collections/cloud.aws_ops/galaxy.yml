@@ -1,0 +1,29 @@
+---
+authors:
+  - Ansible (https://github.com/ansible)
+description: Amazon AWS roles and playbooks for Ansible.
+documentation: ''
+homepage: ''
+issues: https://github.com/ansible-collections/cloud.aws_ops/issues
+license_file: LICENSE
+namespace: cloud
+name: aws_ops
+readme: README.md
+repository: https://github.com/ansible-collections/cloud.aws_ops
+tags:
+  - amazon
+  - aws
+  - cloud
+  - infrastructure
+  - cluster
+dependencies:
+  amazon.aws: '>=10.0.0,<12.0.0-dev0'
+  community.aws: '>=10.0.0,<12.0.0-dev0'
+  amazon.cloud: '>=0.4.0'
+  community.libvirt: '>=1.2.0'
+version: 5.0.0-dev0
+build_ignore:
+  - .DS_Store
+  - '*.tar.gz'
+  - '*cloud-config-aws.ini'
+  - '*cloud-config-aws.yml'

@@ -1,0 +1,15 @@
+---
+- name: Gather APIs | Endpoint Loop | Set facts and initialize pagination # noqa: var-naming[no-role-prefix]
+  ansible.builtin.set_fact:
+    __safe_filename: "{{ __safe_filename }}"
+    __component_dest_dir: "{{ __component_dest_dir }}"
+    __base_url: "{{ __base_url }}"
+    component_name: "{{ component_name }}"
+    endpoint_path: "{{ __endpoint_path }}"
+    __current_page: 1
+    __next_url: "{{ __full_url }}"
+    __max_pages: "{{ __max_pages | default(0) | int }}"
+
+- name: Gather APIs | Endpoint Loop | Start pagination loop
+  ansible.builtin.include_tasks: gather_apis_pagination.yml
+...

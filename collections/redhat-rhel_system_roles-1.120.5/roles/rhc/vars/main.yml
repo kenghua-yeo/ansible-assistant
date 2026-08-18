@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: MIT
+---
+
+# ansible_facts required by the role, i.e. actual variables used without
+# the 'ansible_' prefix); see __rhc_required_fact_subsets for the subsets
+# they belong to
+__rhc_required_facts:
+  - distribution
+  - distribution_major_version
+  - distribution_version
+
+# the subsets of ansible_facts that need to be gathered in case any of the
+# fact in __rhc_required_facts is missing; see the documentation of
+# the 'gather_subset' parameter of the 'setup' module
+__rhc_required_fact_subsets: "{{ ['!all', '!min'] + __rhc_required_facts }}"
+
+__rhc_state_absent:
+  state: absent
+
+# empty string, used in case a variable is needed for an empty string
+__rhc_empty_string: ""
+
+__rhc_insights_conf: "/etc/insights-client/insights-client.conf"
+
+__rhc_insights_tags: "/etc/insights-client/tags.yaml"
+
+# name of the rhcd/yggdrasil systemd service that maintains the mqtt connection
+# to Insights, used for remediations; starting from EL 10 the service is the
+# upstream one, and no more the downstream-branded one
+__rhc_yggdrasil_systemd_service: "{{ 'yggdrasil' if (ansible_facts['distribution_major_version'] | int >= 10) else 'rhcd' }}"
+
+# BEGIN - DO NOT EDIT THIS BLOCK - rh distros variables
+# Ansible distribution identifiers that the role treats like RHEL
+__rhc_rh_distros:
+  - AlmaLinux
+  - CentOS
+  - RedHat
+  - Rocky
+
+# Same as above but includes Fedora
+__rhc_rh_distros_fedora: "{{ __rhc_rh_distros + ['Fedora'] }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone
+__rhc_is_rh_distro: "{{ ansible_facts['distribution'] in __rhc_rh_distros }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone, or Fedora
+__rhc_is_rh_distro_fedora: "{{ ansible_facts['distribution'] in __rhc_rh_distros_fedora }}"
+# END - DO NOT EDIT THIS BLOCK - rh distros variables

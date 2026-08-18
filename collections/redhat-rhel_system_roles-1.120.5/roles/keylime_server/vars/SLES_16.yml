@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: MIT
+---
+
+__keylime_server_packages:
+  - keylime-verifier
+  - keylime-registrar
+  - python313-pyasn1
+  - python313-pyasn1-modules

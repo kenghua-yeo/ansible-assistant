@@ -1,0 +1,32 @@
+{# If both udp_ports and tcp_ports appear in the __rsyslog_input, \
+   udp_ports are used in the rsyslog config and tcp_ports are dropped. \
+   If both udp_ports and tcp_ports are not configured, \
+   it is default to 'tcp_ports: [514]'. #}
+{% if __rsyslog_input.udp_ports | d([]) | length > 0 %}
+# Log messages from remote hosts over UDP
+input(name="{{ __rsyslog_input.name }}" type="imudp" port=["{{ __rsyslog_input.udp_ports | join('","') }}"])
+{{ lookup('template', 'input_template.j2') }}
+{% else %}
+{%   if not __rsyslog_input.tcp_ports | d([]) | length > 0 %}
+{%     set item_tcp_ports = ["514"] %}
+{%   else %}
+{%     set item_tcp_ports = __rsyslog_input.tcp_ports %}
+{%   endif %}
+{%   for tport in item_tcp_ports %}
+{%     set __logging_loop_index = loop.index %}
+{%     if not __rsyslog_input.tls | d(false) | bool %}
+# Log messages from remote hosts over plain TCP
+input(name="{{ __rsyslog_input.name }}_{{ __logging_loop_index }}" type="imptcp" port="{{ tport }}")
+{%     else %}
+# Log messages from remote hosts over TLS
+input(name="{{ __rsyslog_input.name }}_{{ __logging_loop_index }}" type="imtcp" port="{{ tport }}")
+{%     endif %}
+{%     for output_name in __output_list %}
+if
+  ($inputname == "{{ __rsyslog_input.name }}_{{ __logging_loop_index }}")
+  then {
+    call {{ output_name }}
+}
+{%     endfor %}
+{%   endfor %}
+{% endif %}

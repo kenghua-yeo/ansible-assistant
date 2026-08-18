@@ -1,0 +1,96 @@
+---
+# NOTE: The use of `become: false` in the
+# `stat` is to avoid using a become method.
+# NOTE: `fileglob` is the only lookup that will
+# look in the correct lookup path for files.  Yes,
+# I tried `first_file` and it did not work the same
+# way.  The wrinkle is that we do not want to match
+# file globs, so we escape any file glob patterns
+# in the string before using `fileglob`.
+- name: Prepare module installation
+  when:
+    - state == "enabled"
+    - __selinux_item.path is defined
+  block:
+    - name: Get checksum for {{ __selinux_item.path | d("module file") }}
+      stat:
+        path: "{{ __resolved_file }}"
+        checksum_algorithm: sha256
+      vars:
+        __esc: \\
+        __glob_pat: "([*?[])"
+        __escaped_file: "{{ __selinux_item.path | regex_replace(__glob_pat, __esc ~ '\\1') }}"
+        __resolved_file: "{{ lookup('fileglob', __escaped_file) }}"
+      register: module_file
+      delegate_to: localhost
+      become: false
+
+    - name: Raise an error when module file doesn't exist
+      fail:
+        msg: >-
+          The module that you try to install does not exist in
+          {{ __selinux_item.path }}
+      when: not module_file.stat.exists
+
+    - name: Install module
+      when: not module_file.stat.checksum in checksum
+      block:
+        - name: Create temporary directory
+          tempfile:
+            state: directory
+            prefix: linux_system_role.selinux
+          register: tempdir
+
+        - name: Copy module file {{ __selinux_item.path | d("") }}
+          copy:
+            dest: "{{ tempdir.path }}"
+            src: "{{ __selinux_item.path }}"
+            mode: preserve
+          when: tempdir.path is defined
+
+        - name: Install the module
+          redhat.rhel_system_roles.local_semodule:
+            path: "{{ tempdir.path }}/{{ __selinux_item.path | basename }}"
+            priority: "{{ priority }}"
+            state: enabled
+          notify: __selinux_reload_policy
+          when: tempdir.path is defined
+      always:
+        - name: Clean temporary directory {{ tempdir.path | d("") }}
+          file:
+            path: "{{ tempdir.path }}"
+            state: absent
+          when: tempdir.path is defined
+
+- name: Remove module
+  redhat.rhel_system_roles.local_semodule:
+    name: "{{ mod_name }}"
+    state: absent
+    priority: "{{ priority }}"
+  when: state == "absent"
+  notify: __selinux_reload_policy
+
+- name: Enable module
+  redhat.rhel_system_roles.local_semodule:
+    name: "{{ mod_name }}"
+    state: enabled
+  when: state == "enabled" and __selinux_item.path is not defined
+  notify: __selinux_reload_policy
+
+- name: Disable module
+  redhat.rhel_system_roles.local_semodule:
+    name: "{{ mod_name }}"
+    state: "disabled"
+  when: state == "disabled" and __selinux_item.path is not defined
+  notify: __selinux_reload_policy
+
+- name: Refresh SELinux modules facts
+  redhat.rhel_system_roles.selinux_modules_facts:
+
+# This is a workaround to set the SELinux modules facts after the selinux_modules_facts module is executed
+# because with newer version of Ansible facts are no longer set as variables
+- name: Set SELinux modules facts
+  set_fact:
+    selinux_installed_modules: "{{ ansible_facts['selinux_installed_modules'] }}"
+    selinux_priorities: "{{ ansible_facts['selinux_priorities'] }}"
+    selinux_checksums: "{{ ansible_facts['selinux_checksums'] }}"

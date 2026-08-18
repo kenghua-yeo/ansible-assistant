@@ -1,0 +1,63 @@
+# SPDX-License-Identifier: MIT
+# convert the given list which is either a list of scalar values or
+# a list of dict to a list of dict
+# if the given list has users, look up those users with getent
+# the returned list of dict will have fields for xdg_dir
+# and units_dir which may be user specific
+# Input:
+# __systemd_list - either a list of strings or a list of dicts
+# Output:
+# __systemd_user_info - dict mapping user name to xdg_dir
+# and units_dir for that user - which may be root
+# __systemd_dict_list - list of dict - each dict will have the
+# following fields:
+# item - the given item from the input list
+# user - the user from the input list, or "root"
+# state - the state from the input list, or "present"
+# xdg_dir - the XDG runtime dir for the user
+# units_dir - where to put the systemd unit files - user or system dir
+---
+- name: Manage user info and units list
+  when: __systemd_list | length > 0
+  vars:
+    __systemd_user_list: "{{ ((__systemd_list | select('mapping') | selectattr('user', 'defined') | map(attribute='user') | list) + ['root']) | unique | list }}"
+  block:
+  # extract user data from the systemd_unit lists, and look up
+  # user data using getent
+    - name: Get user information
+      include_tasks: get_update_user_info.yml
+      loop: "{{ __systemd_user_list }}"
+      loop_control:
+        loop_var: __systemd_user_name
+
+    - name: Reset __systemd_dict_list
+      set_fact:
+        __systemd_dict_list: []
+
+  # convert to the output format
+    - name: Convert to list of dict with user data
+      set_fact:
+        __systemd_dict_list: "{{ __systemd_dict_list + [newitem | combine(newstate, newuser, newgroup, newxdg_dir, newunits_dir, newmode, newdir_mode)] }}"
+      loop: "{{ __systemd_list }}"
+      vars:
+        newitem: "{{ item if item is mapping else {'item': item} }}"
+        newstate:
+          state: "{{ item['state'] if item is mapping and 'state' in item else 'present' }}"
+        newuser:
+          user: "{{ item['user'] if item is mapping and 'user' in item else 'root' }}"
+        newgroup:
+          group: "{{ item['group'] if item is mapping and 'group' in item else __systemd_user_info[newuser['user']]['group'] }}"
+        newxdg_dir:
+          xdg_dir: "{{ item['xdg_dir'] if item is mapping and 'xdg_dir' in item else __systemd_user_info[newuser['user']]['xdg_dir'] }}"
+        newunits_dir:
+          units_dir: "{{ item['units_dir'] if item is mapping and 'units_dir' in item else __systemd_user_info[newuser['user']]['units_dir'] }}"
+        newmode:
+          mode: "{{ item['mode'] if item is mapping and 'mode' in item else (newuser['user'] == 'root') | ternary('0644', '0600') }}"
+        newdir_mode:
+          dir_mode: "{{ item['dir_mode'] if item is mapping and 'dir_mode' in item else (newuser['user'] == 'root') | ternary('0755', '0700') }}"
+
+    - name: Enable linger if needed
+      command: loginctl enable-linger {{ item | quote }}
+      loop: "{{ __systemd_user_list | reject('match', '^root$') | list }}"
+      args:
+        creates: /var/lib/systemd/linger/{{ item }}

@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: MIT
+---
+# Put the role's internal variables here that are not distribution specific.
+
+__certificate_provider_default: certmonger
+
+__certificate_certmonger_packages:
+  - certmonger
+
+__certificate_provider_vars:
+  certmonger:
+    packages: "{{ __certificate_certmonger_packages }}"
+    service: certmonger
+    config_dir: /etc/certmonger/
+    hooks_dirs_owner: root
+    hooks_dirs_group: root
+    hooks_dirs_mode: "0700"
+
+__certificate_packages:
+  - python3-pyasn1
+  - python3-cryptography
+  - python3-dbus
+
+__certificate_default_directory: /etc/pki/tls
+
+# ansible_facts required by the role
+__certificate_required_facts:
+  - distribution
+  - distribution_major_version
+  - distribution_version
+  - os_family
+
+# the subsets of ansible_facts that need to be gathered in case any of the
+# facts in required_facts is missing; see the documentation of
+# the 'gather_subset' parameter of the 'setup' module
+__certificate_required_facts_subsets: "{{ ['!all', '!min'] + __certificate_required_facts }}"
+
+# BEGIN - DO NOT EDIT THIS BLOCK - rh distros variables
+# Ansible distribution identifiers that the role treats like RHEL
+__certificate_rh_distros:
+  - AlmaLinux
+  - CentOS
+  - RedHat
+  - Rocky
+
+# Same as above but includes Fedora
+__certificate_rh_distros_fedora: "{{ __certificate_rh_distros + ['Fedora'] }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone
+__certificate_is_rh_distro: "{{ ansible_facts['distribution'] in __certificate_rh_distros }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone, or Fedora
+__certificate_is_rh_distro_fedora: "{{ ansible_facts['distribution'] in __certificate_rh_distros_fedora }}"
+# END - DO NOT EDIT THIS BLOCK - rh distros variables

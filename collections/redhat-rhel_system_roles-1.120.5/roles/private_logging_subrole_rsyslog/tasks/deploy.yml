@@ -1,0 +1,61 @@
+---
+# SPDX-License-Identifier: GPL-3.0-only
+
+- name: Install/Update required packages
+  package:
+    name: "{{ __rsyslog_packages }}"
+    state: present
+    use: "{{ (__logging_is_ostree | d(false)) | ternary('redhat.rhel_system_roles.rhel_rpm_ostree', omit) }}"
+  when:
+    - __rsyslog_packages | length > 0
+    - not rsyslog_in_image | bool
+  notify: Restart rsyslogd
+
+- name: Generate role configuration files in rsyslog.d
+  template:
+    src: 'rules.conf.j2'
+    dest: '{{ inner_item.path | d(__rsyslog_config_dir) }}/{{ inner_item.filename | d((inner_item.weight if inner_item.weight | d() else rsyslog_weight_map[inner_item.type | d("rules")]) + "-" + (inner_item.name | d("rules")) + "." + (inner_item.suffix | d("conf"))) }}'
+    owner: '{{ inner_item.owner | d("root") }}'
+    group: '{{ inner_item.group | d("root") }}'
+    mode: '{{ inner_item.mode | d("0644") }}'
+  loop: '{{ __rsyslog_rules | flatten }}'
+  loop_control:
+    loop_var: inner_item
+  vars:
+    __default_flows:
+      - name: default_flow
+        inputs: ["{{ __rsyslog_input.name }}"]
+        outputs: [default_files]
+    rsyslog_flows: "{{ logging_flows | d(__default_flows, true) }}"
+    __output_list: "{{ rsyslog_flows | selectattr('inputs', 'contains', __rsyslog_input.name) | map(attribute='outputs') | flatten | list }}"
+  when:
+    - __rsyslog_enabled | bool
+    - inner_item.filename | d("") | length > 0 or inner_item.name | d("") | length > 0
+    - inner_item.options | d([]) | length > 0 or inner_item.sections | d([]) | length > 0
+    - inner_item.state is undefined or inner_item.state != 'absent'
+  notify: Restart rsyslogd
+  register: __rsyslog_deploy_templates
+
+- name: Add deployed templates to global list
+  set_fact:
+    __rsyslog_template_results: "{{ __rsyslog_template_results + [__rsyslog_deploy_templates] }}"
+
+- name: Remove role config files from rsyslog.d
+  file:
+    path: '{{ inner_item.path | d(__rsyslog_config_dir) }}/{{ inner_item.filename | d((inner_item.weight if inner_item.weight | d() else rsyslog_weight_map[inner_item.type | d("rules")]) + "-" + (inner_item.name | d("rules")) + "." + (inner_item.suffix | d("conf"))) }}'
+    state: absent
+  loop: '{{ __rsyslog_rules | flatten }}'
+  loop_control:
+    loop_var: inner_item
+  vars:
+    __default_flows:
+      - name: default_flow
+        inputs: ["{{ __rsyslog_input.name }}"]
+        outputs: [default_files]
+    rsyslog_flows: "{{ logging_flows | d(__default_flows, true) }}"
+    __output_list: "{{ rsyslog_flows | selectattr('inputs', 'contains', __rsyslog_input.name) | map(attribute='outputs') | flatten | list }}"
+  when:
+    - (not __rsyslog_enabled | bool) or (inner_item.state | d('present') == 'absent')
+    - inner_item.filename | d("") | length > 0 or inner_item.name | d("") | length > 0
+    - inner_item.options | d([]) | length > 0 or inner_item.sections | d([]) | length > 0
+  notify: Restart rsyslogd

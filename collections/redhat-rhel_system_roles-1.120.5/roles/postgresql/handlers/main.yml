@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Restart postgresql
+  service:
+    name: postgresql
+    state: restarted
+  when: __postgresql_is_booted | bool

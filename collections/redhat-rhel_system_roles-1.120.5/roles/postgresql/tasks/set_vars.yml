@@ -1,0 +1,68 @@
+---
+- name: Ensure ansible_facts used by role
+  setup:
+    gather_subset: "{{ __postgresql_required_facts_subsets }}"
+  when: __postgresql_required_facts | difference(ansible_facts.keys() | list) | length > 0
+
+- name: Determine if system is ostree and set flag
+  when: __postgresql_is_ostree is not defined
+  block:
+    - name: Check if system is ostree
+      stat:
+        path: /run/ostree-booted
+      register: __ostree_booted_stat
+
+    - name: Set flag to indicate system is ostree
+      set_fact:
+        __postgresql_is_ostree: "{{ __ostree_booted_stat.stat.exists }}"
+
+- name: Determine if system is booted with systemd
+  when: __postgresql_is_booted is not defined
+  block:
+    - name: Run systemctl
+    # noqa command-instead-of-module
+      command: systemctl is-system-running
+      register: __is_system_running
+      changed_when: false
+      check_mode: false
+      failed_when: false
+
+    - name: Require installed systemd
+      fail:
+        msg: "Error: This role requires systemd to be installed."
+      when: '"No such file or directory" in __is_system_running.msg | d("")'
+
+    - name: Set flag to indicate that systemd runtime operations are available
+      set_fact:
+      # see https://www.man7.org/linux/man-pages/man1/systemctl.1.html#:~:text=is-system-running%20output
+        __postgresql_is_booted: "{{ __is_system_running.stdout != 'offline' }}"
+
+- name: Set platform/version specific variables
+  include_vars: "{{ __vars_file }}"
+  loop:
+    - "{{ ansible_facts['os_family'] }}.yml"
+    - "{{ ansible_facts['distribution'] }}.yml"
+    - >-
+      {{ ansible_facts['distribution'] ~ '_' ~
+      ansible_facts['distribution_major_version'] }}.yml
+    - >-
+      {{ ansible_facts['distribution'] ~ '_' ~
+      ansible_facts['distribution_version'] }}.yml
+  vars:
+    __vars_file: "{{ role_path }}/vars/{{ item }}"
+  when: __vars_file is file
+
+- name: Check postgresql.conf
+  stat:
+    path: "{{ __postgresql_main_conf_file }}"
+  register: __postgresql_conf
+
+- name: Check TLS crt file
+  stat:
+    path: "{{ postgresql_cert_name }}.crt"
+  register: __postgresql_cert
+
+- name: Check TLS private key file
+  stat:
+    path: "{{ postgresql_cert_name }}.key"
+  register: __postgresql_key

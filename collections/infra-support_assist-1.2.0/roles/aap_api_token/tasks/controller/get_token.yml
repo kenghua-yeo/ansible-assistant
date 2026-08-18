@@ -1,0 +1,33 @@
+---
+- name: Get Token | Set fact to clear token when done # noqa: var-naming[no-role-prefix]
+  ansible.builtin.set_fact:
+    __clear_token: true
+  tags:
+    - always
+
+- name: Get Token | Create a new token using controller username/password # noqa: var-naming[no-role-prefix]
+  ansible.controller.token:
+    description: 'Temporary token for infra.support_assist operations'
+    scope: "write"
+    state: present
+    controller_host: "{{ aap_api_token_aap_hostname }}"
+    controller_username: "{{ aap_api_token_aap_username }}"
+    controller_password: "{{ aap_api_token_aap_password }}"
+    validate_certs: "{{ aap_api_token_aap_validate_certs }}"
+  no_log: "{{ aap_api_token_no_log | default(true) | bool }}"
+  register: authtoken_res
+  changed_when: false
+  tags:
+    - always
+
+# - name: Debug authtoken_res
+#   ansible.builtin.debug:
+#     var: authtoken_res
+
+- name: Set facts # noqa: var-naming[no-role-prefix]
+  no_log: "{{ aap_api_token_no_log | default(true) | bool }}"
+  ansible.builtin.set_fact:
+    aap_api_token_aap_token: "{{ controller_token.token }}"
+    aap_token: "{{ controller_token.token }}"
+    controller_oauthtoken: "{{ controller_token.token }}"
+...

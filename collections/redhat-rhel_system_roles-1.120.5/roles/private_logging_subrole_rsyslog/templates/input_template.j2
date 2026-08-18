@@ -1,0 +1,13 @@
+{% for output_name in __output_list %}
+if
+{%   if __rsyslog_input.type == "basics" %}
+  ($inputname == "imjournal" or $inputname == "imuxsock")
+{%   elif __rsyslog_input.type == "remote" %}
+  ($inputname == "{{ __rsyslog_input.name }}")
+{%   else %}
+  ($syslogtag == "{{ __rsyslog_input.name }}")
+{%   endif %}
+  then {
+    call {{ output_name }}
+}
+{% endfor %}

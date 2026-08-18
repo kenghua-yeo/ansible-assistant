@@ -1,0 +1,88 @@
+---
+- name: Ensure ansible_facts used by role
+  include_tasks: set_vars.yml
+
+- name: Install required packages
+  package:
+    name: "{{ __kdump_packages }}"
+    state: present
+    use: "{{ (__kdump_is_ostree | d(false)) | ternary('redhat.rhel_system_roles.rhel_rpm_ostree', omit) }}"
+
+- name: Ensure that kdump is enabled
+  service:
+    name: "{{ __kdump_service }}"
+    enabled: true
+
+- name: Include SSH tasks
+  include_tasks: ssh.yml
+  when:
+    - kdump_target.type | d(none) == 'ssh'
+
+- name: Get mode of kdump configuration file if it exists
+  stat:
+    path: "{{ __kdump_conf_file }}"
+  register: __kdump_conf
+
+- name: Generate kdump configuration file
+  template:
+    src: "{{ __kdump_conf_file | basename }}.j2"
+    dest: "{{ __kdump_conf_file }}"
+    backup: true
+    mode: "{{ __kdump_conf.stat.mode | d('0644') }}"
+  notify: Restart kdump
+
+- name: Find out reserved memory for the crash kernel
+  slurp:
+    src: /sys/kernel/kexec_crash_size
+  register: kexec_crash_size
+  until: kexec_crash_size is success
+
+- name: Set the kdump_reboot_required fact
+  set_fact:
+    kdump_reboot_required: "{{ kexec_crash_size.content | b64decode | int < 1 }}"
+
+- name: Update crashkernel setting if needed
+  when:
+    - kdump_reboot_required | bool
+    - ansible_facts['distribution'] in ['RedHat', 'CentOS', 'Fedora']
+  block:
+    - name: Use kdumpctl reset-crashkernel if needed
+      command: kdumpctl reset-crashkernel --kernel=ALL
+      when: ansible_facts['distribution_major_version'] | int >= 9
+      changed_when: true
+
+    - name: Use grubby to update crashkernel=auto if needed
+      command: grubby --args=crashkernel=auto --update-kernel=ALL
+      when: ansible_facts['distribution_major_version'] | int <= 8
+      changed_when: true
+
+- name: Fail if reboot is required and kdump_reboot_ok is false
+  fail:
+    msg: >-
+      "Reboot is required to apply changes. Re-execute the role after boot to
+      ensure that kdump is working."
+  when:
+    - kdump_reboot_required | bool
+    - not kdump_reboot_ok
+
+- name: Reboot the managed node
+  reboot:
+  when:
+    - kdump_reboot_required | bool
+    - kdump_reboot_ok | bool
+
+- name: Clear the kdump_reboot_required flag
+  set_fact:
+    kdump_reboot_required: false
+  when:
+    - kdump_reboot_required | bool
+    - kdump_reboot_ok | bool
+
+# This task is for users who run the role after reboot. The handlers do not run
+# in this case, because the role results in not changed state. It is necessary
+# to explicitly start kdump to rebuild initrd.
+- name: Ensure that kdump is started
+  service:
+    name: "{{ __kdump_service }}"
+    state: started
+  register: __kdump_service_start

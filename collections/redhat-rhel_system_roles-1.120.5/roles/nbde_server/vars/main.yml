@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: MIT
+---
+__nbde_server_tangd_socket_dir: /etc/systemd/system/tangd.socket.d
+__nbde_server_tangd_socket_file_name: override.conf
+__nbde_server_tangd_socket_file_path: "{{ __nbde_server_tangd_socket_dir }}/{{ __nbde_server_tangd_socket_file_name }}"
+
+# ansible_facts required by the role
+__nbde_server_required_facts:
+  - distribution
+  - distribution_major_version
+  - distribution_version
+  - os_family
+
+# the subsets of ansible_facts that need to be gathered in case any of the
+# facts in required_facts is missing; see the documentation of
+# the 'gather_subset' parameter of the 'setup' module
+__nbde_server_required_facts_subsets: "{{ ['!all', '!min'] + __nbde_server_required_facts }}"
+
+# vim:set ts=2 sw=2 et:
+
+# BEGIN - DO NOT EDIT THIS BLOCK - rh distros variables
+# Ansible distribution identifiers that the role treats like RHEL
+__nbde_server_rh_distros:
+  - AlmaLinux
+  - CentOS
+  - RedHat
+  - Rocky
+
+# Same as above but includes Fedora
+__nbde_server_rh_distros_fedora: "{{ __nbde_server_rh_distros + ['Fedora'] }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone
+__nbde_server_is_rh_distro: "{{ ansible_facts['distribution'] in __nbde_server_rh_distros }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone, or Fedora
+__nbde_server_is_rh_distro_fedora: "{{ ansible_facts['distribution'] in __nbde_server_rh_distros_fedora }}"
+# END - DO NOT EDIT THIS BLOCK - rh distros variables

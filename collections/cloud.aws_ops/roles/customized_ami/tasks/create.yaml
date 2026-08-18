@@ -1,0 +1,25 @@
+---
+- name: Delete existing images
+  ansible.builtin.include_tasks: delete.yaml
+
+- name: Create custom AMI
+  block:
+    - name: Get Source AMI identifier
+      ansible.builtin.include_tasks: read_source_ami.yaml
+
+    - name: Get Source AMI identifier
+      ansible.builtin.include_tasks: create_ec2_resources.yaml
+
+    - name: Create custom AMI
+      ansible.builtin.include_tasks: create_ami.yaml
+
+  always:
+    - name: Include 'tasks/delete_ec2_resources.yaml' file
+      ansible.builtin.include_tasks: tasks/delete_ec2_resources.yaml
+
+- name: Check that existing AMI found
+  ansible.builtin.debug:
+    msg: "Existing AMI found with name: '{{ customized_ami_name }}'"
+  when:
+    - customized_ami__existing_amis.images | length > 0
+    - not (customized_ami_recreate_if_exists | bool)

@@ -1,0 +1,45 @@
+{
+ "collection_info": {
+  "namespace": "infra",
+  "name": "support_assist",
+  "version": "1.2.0",
+  "authors": [
+   "Lenny Shirley @lennysh",
+   "Diego Mateus @dfelipem"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "ansible",
+   "automation",
+   "infrastructure",
+   "linux",
+   "mustgather",
+   "redhat",
+   "sosreport",
+   "support",
+   "tools"
+  ],
+  "description": "Ansible Collection that will gather various reports/outputs that are commonly asked for in Red Hat Support Cases",
+  "license": [
+   "GPL-3.0-or-later"
+  ],
+  "license_file": null,
+  "dependencies": {
+   "ansible.controller": ">=4.6.0",
+   "ansible.platform": ">=2.5.0",
+   "community.general": ">=11.4.0"
+  },
+  "repository": "https://github.com/redhat-cop/infra.support_assist",
+  "documentation": "https://github.com/redhat-cop/infra.support_assist/blob/devel/README.md",
+  "homepage": null,
+  "issues": "https://github.com/redhat-cop/infra.support_assist/issues"
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "cd9d36e0d91ef2d6af1626f93325e75b38a10d5102152b8b5b4e040263b6fd9c",
+  "format": 1
+ },
+ "format": 1
+}

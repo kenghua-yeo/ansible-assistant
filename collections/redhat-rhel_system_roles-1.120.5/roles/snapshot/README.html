@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<!--
+==============================================================================
+           "GitHub HTML5 Pandoc Template" v2.2 — by Tristano Ajmone
+==============================================================================
+Copyright © Tristano Ajmone, 2017-2020, MIT License (MIT). Project's home:
+
+- https://github.com/tajmone/pandoc-goodies
+
+The CSS in this template reuses source code taken from the following projects:
+
+- GitHub Markdown CSS: Copyright © Sindre Sorhus, MIT License (MIT):
+  https://github.com/sindresorhus/github-markdown-css
+
+- Primer CSS: Copyright © 2016-2017 GitHub Inc., MIT License (MIT):
+  http://primercss.io/
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The MIT License
+
+Copyright (c) Tristano Ajmone, 2017-2020 (github.com/tajmone/pandoc-goodies)
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+Copyright (c) 2017 GitHub Inc.
+
+"GitHub Pandoc HTML5 Template" is Copyright (c) Tristano Ajmone, 2017-2020,
+released under the MIT License (MIT); it contains readaptations of substantial
+portions of the following third party softwares:
+
+(1) "GitHub Markdown CSS", Copyright (c) Sindre Sorhus, MIT License (MIT).
+(2) "Primer CSS", Copyright (c) 2016 GitHub Inc., MIT License (MIT).
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+==============================================================================-->
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>snapshot</title>
+  <style type="text/css">
+@charset "UTF-8";.markdown-body{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;color:#24292e;font-family:-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";font-size:16px;line-height:1.5;word-wrap:break-word;box-sizing:border-box;min-width:200px;margin:0 auto;padding:45px}.markdown-body a{color:#0366d6;background-color:transparent;text-decoration:none;-webkit-text-decoration-skip:objects}.markdown-body a:active,.markdown-body a:hover{outline-width:0}.markdown-body a:hover{text-decoration:underline}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body strong{font-weight:600}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{margin-top:24px;margin-bottom:16px;font-weight:600;line-height:1.25}.markdown-body h1{font-size:2em;margin:.67em 0;padding-bottom:.3em;border-bottom:1px solid #eaecef}.markdown-body h2{padding-bottom:.3em;font-size:1.5em;border-bottom:1px solid #eaecef}.markdown-body h3{font-size:1.25em}.markdown-body h4{font-size:1em}.markdown-body h5{font-size:.875em}.markdown-body h6{font-size:.85em;color:#6a737d}.markdown-body img{border-style:none}.markdown-body svg:not(:root){overflow:hidden}.markdown-body hr{box-sizing:content-box;height:.25em;margin:24px 0;padding:0;overflow:hidden;background-color:#e1e4e8;border:0}.markdown-body hr::before{display:table;content:""}.markdown-body hr::after{display:table;clear:both;content:""}.markdown-body input{margin:0;overflow:visible;font:inherit;font-family:inherit;font-size:inherit;line-height:inherit}.markdown-body [type=checkbox]{box-sizing:border-box;padding:0}.markdown-body *{box-sizing:border-box}.markdown-body blockquote{margin:0}.markdown-body ol,.markdown-body ul{padding-left:2em}.markdown-body ol ol,.markdown-body ul ol{list-style-type:lower-roman}.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{margin-top:0;margin-bottom:0}.markdown-body ol ol ol,.markdown-body ol ul ol,.markdown-body ul ol ol,.markdown-body ul ul ol{list-style-type:lower-alpha}.markdown-body li>p{margin-top:16px}.markdown-body li+li{margin-top:.25em}.markdown-body dd{margin-left:0}.markdown-body dl{padding:0}.markdown-body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:600}.markdown-body dl dd{padding:0 16px;margin-bottom:16px}.markdown-body code{font-family:SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace}.markdown-body pre{font:12px SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace;word-wrap:normal}.markdown-body blockquote,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{margin-top:0;margin-bottom:16px}.markdown-body blockquote{padding:0 1em;color:#6a737d;border-left:.25em solid #dfe2e5}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body table{display:block;width:100%;overflow:auto;border-spacing:0;border-collapse:collapse}.markdown-body table th{font-weight:600}.markdown-body table td,.markdown-body table th{padding:6px 13px;border:1px solid #dfe2e5}.markdown-body table tr{background-color:#fff;border-top:1px solid #c6cbd1}.markdown-body table tr:nth-child(2n){background-color:#f6f8fa}.markdown-body img{max-width:100%;box-sizing:content-box;background-color:#fff}.markdown-body code{padding:.2em 0;margin:0;font-size:85%;background-color:rgba(27,31,35,.05);border-radius:3px}.markdown-body code::after,.markdown-body code::before{letter-spacing:-.2em;content:" "}.markdown-body pre>code{padding:0;margin:0;font-size:100%;word-break:normal;white-space:pre;background:0 0;border:0}.markdown-body .highlight{margin-bottom:16px}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#f6f8fa;border-radius:3px}.markdown-body pre code{display:inline;max-width:auto;padding:0;margin:0;overflow:visible;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}.markdown-body pre code::after,.markdown-body pre code::before{content:normal}.markdown-body .full-commit .btn-outline:not(:disabled):hover{color:#005cc5;border-color:#005cc5}.markdown-body kbd{box-shadow:inset 0 -1px 0 #959da5;display:inline-block;padding:3px 5px;font:11px/10px SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace;color:#444d56;vertical-align:middle;background-color:#fcfcfc;border:1px solid #c6cbd1;border-bottom-color:#959da5;border-radius:3px;box-shadow:inset 0 -1px 0 #959da5}.markdown-body :checked+.radio-label{position:relative;z-index:1;border-color:#0366d6}.markdown-body .task-list-item{list-style-type:none}.markdown-body .task-list-item+.task-list-item{margin-top:3px}.markdown-body .task-list-item input{margin:0 .2em .25em -1.6em;vertical-align:middle}.markdown-body::before{display:table;content:""}.markdown-body::after{display:table;clear:both;content:""}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.Alert,.Error,.Note,.Success,.Warning{padding:11px;margin-bottom:24px;border-style:solid;border-width:1px;border-radius:4px}.Alert p,.Error p,.Note p,.Success p,.Warning p{margin-top:0}.Alert p:last-child,.Error p:last-child,.Note p:last-child,.Success p:last-child,.Warning p:last-child{margin-bottom:0}.Alert{color:#246;background-color:#e2eef9;border-color:#bac6d3}.Warning{color:#4c4a42;background-color:#fff9ea;border-color:#dfd8c2}.Error{color:#911;background-color:#fcdede;border-color:#d2b2b2}.Success{color:#22662c;background-color:#e2f9e5;border-color:#bad3be}.Note{color:#2f363d;background-color:#f6f8fa;border-color:#d5d8da}.Alert h1,.Alert h2,.Alert h3,.Alert h4,.Alert h5,.Alert h6{color:#246;margin-bottom:0}.Warning h1,.Warning h2,.Warning h3,.Warning h4,.Warning h5,.Warning h6{color:#4c4a42;margin-bottom:0}.Error h1,.Error h2,.Error h3,.Error h4,.Error h5,.Error h6{color:#911;margin-bottom:0}.Success h1,.Success h2,.Success h3,.Success h4,.Success h5,.Success h6{color:#22662c;margin-bottom:0}.Note h1,.Note h2,.Note h3,.Note h4,.Note h5,.Note h6{color:#2f363d;margin-bottom:0}.Alert h1:first-child,.Alert h2:first-child,.Alert h3:first-child,.Alert h4:first-child,.Alert h5:first-child,.Alert h6:first-child,.Error h1:first-child,.Error h2:first-child,.Error h3:first-child,.Error h4:first-child,.Error h5:first-child,.Error h6:first-child,.Note h1:first-child,.Note h2:first-child,.Note h3:first-child,.Note h4:first-child,.Note h5:first-child,.Note h6:first-child,.Success h1:first-child,.Success h2:first-child,.Success h3:first-child,.Success h4:first-child,.Success h5:first-child,.Success h6:first-child,.Warning h1:first-child,.Warning h2:first-child,.Warning h3:first-child,.Warning h4:first-child,.Warning h5:first-child,.Warning h6:first-child{margin-top:0}h1.title,p.subtitle{text-align:center}h1.title.followed-by-subtitle{margin-bottom:0}p.subtitle{font-size:1.5em;font-weight:600;line-height:1.25;margin-top:0;margin-bottom:16px;padding-bottom:.3em}div.line-block{white-space:pre-line}
+  </style>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<article class="markdown-body">
+<header>
+<h1 class="title">snapshot</h1>
+</header>
+<hr>
+<nav id="TOC">
+<h1 class="toc-title">Contents</h1>
+<ul>
+<li><a href="#requirements" id="toc-requirements">Requirements</a>
+<li><a href="#role-variables" id="toc-role-variables">Role Variables</a>
+<ul>
+<li><a href="#snapshot_lvm_action"
+id="toc-snapshot_lvm_action">snapshot_lvm_action</a></li>
+<li><a href="#snapshot_lvm_set"
+id="toc-snapshot_lvm_set">snapshot_lvm_set</a></li>
+<li><a href="#snapshot_lvm_snapset_name"
+id="toc-snapshot_lvm_snapset_name">snapshot_lvm_snapset_name</a></li>
+<li><a href="#snapshot_lvm_percent_space_required"
+id="toc-snapshot_lvm_percent_space_required">snapshot_lvm_percent_space_required</a></li>
+<li><a href="#snapshot_lvm_all_vgs"
+id="toc-snapshot_lvm_all_vgs">snapshot_lvm_all_vgs</a></li>
+<li><a href="#snapshot_lvm_vg"
+id="toc-snapshot_lvm_vg">snapshot_lvm_vg</a></li>
+<li><a href="#snapshot_lvm_lv"
+id="toc-snapshot_lvm_lv">snapshot_lvm_lv</a></li>
+<li><a href="#snapshot_lvm_verify_only"
+id="toc-snapshot_lvm_verify_only">snapshot_lvm_verify_only</a></li>
+<li><a href="#snapshot_lvm_mountpoint_create"
+id="toc-snapshot_lvm_mountpoint_create">snapshot_lvm_mountpoint_create</a></li>
+<li><a href="#snapshot_lvm_mountpoint"
+id="toc-snapshot_lvm_mountpoint">snapshot_lvm_mountpoint</a></li>
+<li><a href="#snapshot_lvm_mount_origin"
+id="toc-snapshot_lvm_mount_origin">snapshot_lvm_mount_origin</a></li>
+<li><a href="#snapshot_lvm_mount_options"
+id="toc-snapshot_lvm_mount_options">snapshot_lvm_mount_options</a></li>
+<li><a href="#snapshot_lvm_unmount_all"
+id="toc-snapshot_lvm_unmount_all">snapshot_lvm_unmount_all</a></li>
+<li><a href="#snapshot_lvm_vg_include"
+id="toc-snapshot_lvm_vg_include">snapshot_lvm_vg_include</a></li>
+<li><a href="#snapshot_lvm_bootable"
+id="toc-snapshot_lvm_bootable">snapshot_lvm_bootable</a></li>
+<li><a href="#snapshot_use_copr-experimental"
+id="toc-snapshot_use_copr-experimental">snapshot_use_copr
+(EXPERIMENTAL)</a></li>
+<li><a href="#variables-exported-by-the-role"
+id="toc-variables-exported-by-the-role">Variables Exported by the
+Role</a>
+<ul>
+<li><a href="#snapshot_facts"
+id="toc-snapshot_facts">snapshot_facts</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#rpm-ostree" id="toc-rpm-ostree">rpm-ostree</a></li>
+<li><a href="#license" id="toc-license">License</a></li>
+</ul>
+</nav>
+<hr>
+<p>The <code>snapshot</code> role enables users to add/remove snapshots
+on target machines. This role can be used to configure snapshots
+via:</p>
+<ul>
+<li>LVM</li>
+</ul>
+<h1 id="requirements">Requirements</h1>
+<p>None</p>
+<h1 id="role-variables">Role Variables</h1>
+<h2 id="snapshot_lvm_action">snapshot_lvm_action</h2>
+<p>This variable is required. It supports one of the following
+values:</p>
+<ul>
+<li><p><code>snapshot</code>: Take snapshots of the specified
+VGs/LVs</p></li>
+<li><p><code>check</code>: Validate that snapshot names don't have
+conflicts and there is sufficient space to take the snapshots</p></li>
+<li><p><code>remove</code>: Remove snapshots that conform to the
+specified prefix and pattern</p></li>
+<li><p><code>revert</code>: Revert to snapshots that are specified by
+either the pattern or set. If either the source LV or snapshot are open,
+the merge is deferred until the next time the server reboots and the
+source logical volume is activated.</p></li>
+<li><p><code>extend</code>: Extend snapshot to have at least
+snapshot_lvm_percent_space_required space allocated to the snapshot.
+Allocations are rounded up to the next multiple of the volume group
+extent size.</p></li>
+<li><p><code>mount</code>: Mount a filesystem on a mount point</p></li>
+<li><p><code>umount</code>: Unmount a filesystem</p></li>
+</ul>
+<h2 id="snapshot_lvm_set">snapshot_lvm_set</h2>
+<p>The snapshot role supports sets of volumes. Sets may contain any
+number of volumes. Sets are defined in the following format:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">snapshot_lvm_set</span><span class="kw">:</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapset1</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">bootable</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapshot VG1 LV1</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vg</span><span class="kw">:</span><span class="at"> test_vg1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">lv</span><span class="kw">:</span><span class="at"> lv1</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">percent_space_required</span><span class="kw">:</span><span class="at"> </span><span class="dv">15</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mountpoint</span><span class="kw">:</span><span class="at"> /mnt/lv1_mp</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapshot VG2 LV3</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vg</span><span class="kw">:</span><span class="at"> test_vg2</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">lv</span><span class="kw">:</span><span class="at"> lv3</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mountpoint</span><span class="kw">:</span><span class="at"> /mnt/lv3_mp</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">percent_space_required</span><span class="kw">:</span><span class="at"> </span><span class="dv">15</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapshot VG2 LV4</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vg</span><span class="kw">:</span><span class="at"> test_vg2</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">lv</span><span class="kw">:</span><span class="at"> lv4</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mountpoint</span><span class="kw">:</span><span class="at"> /mnt/lv4_mp</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">percent_space_required</span><span class="kw">:</span><span class="at"> </span><span class="dv">15</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapshot VG3 LV7</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vg</span><span class="kw">:</span><span class="at"> test_vg3</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">lv</span><span class="kw">:</span><span class="at"> lv7</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mountpoint</span><span class="kw">:</span><span class="at"> /mnt/lv7_mp</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">percent_space_required</span><span class="kw">:</span><span class="at"> </span><span class="dv">15</span></span></code></pre></div>
+<p>If the user is indicating the mount action and wants the origin of
+the snapshot to be mounted rather than the snapshot, the set would be
+defined with the additional field "mount_origin" for any entry that it
+applies, for example:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">snapshot_lvm_set</span><span class="kw">:</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapset1</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">bootable</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapshot VG1 LV1</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vg</span><span class="kw">:</span><span class="at"> test_vg1</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">lv</span><span class="kw">:</span><span class="at"> lv1</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">percent_space_required</span><span class="kw">:</span><span class="at"> </span><span class="dv">15</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mountpoint</span><span class="kw">:</span><span class="at"> /mnt/lv1_mp</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mount_origin</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapshot VG2 LV3</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vg</span><span class="kw">:</span><span class="at"> test_vg2</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">lv</span><span class="kw">:</span><span class="at"> lv3</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mountpoint</span><span class="kw">:</span><span class="at"> /mnt/lv3_mp</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">percent_space_required</span><span class="kw">:</span><span class="at"> </span><span class="dv">15</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mount_origin</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapshot VG2 LV4</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vg</span><span class="kw">:</span><span class="at"> test_vg2</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">lv</span><span class="kw">:</span><span class="at"> lv4</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mountpoint</span><span class="kw">:</span><span class="at"> /mnt/lv4_mp</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">percent_space_required</span><span class="kw">:</span><span class="at"> </span><span class="dv">15</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mount_origin</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> snapshot VG3 LV7</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">vg</span><span class="kw">:</span><span class="at"> test_vg3</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">lv</span><span class="kw">:</span><span class="at"> lv7</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mountpoint</span><span class="kw">:</span><span class="at"> /mnt/lv7_mp</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">percent_space_required</span><span class="kw">:</span><span class="at"> </span><span class="dv">15</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">mount_origin</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
+<p>The mount_origin flag defaults to false, so it is not necessary when
+the user is mounting the snapshot rather than the origin.</p>
+<h2 id="snapshot_lvm_snapset_name">snapshot_lvm_snapset_name</h2>
+<p>This variable is required. snapshot_lvm_snapset_name is a string that
+will be appended to the name of the LV when the snapshot set is created.
+It will be used to identify members of the set. It must be at least one
+character long and contain valid characters for use in an LVM volume
+name. A to Z, a to z, 0 to 9, underscore (_), hyphen (-), dot (.), and
+plus (+) are valid characters. When used inside of a snapset definition,
+use name parameter.</p>
+<p>If before running the role, the following LVs exist:</p>
+<pre class="text"><code>LV      VG   Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+home    rhel -wi-ao----   1.00g
+root    rhel -wi-ao----  35.00g
+swap    rhel -wi-ao----  &lt;3.88g
+lv1_vg1 vg1  -wi-a-----   1.00g
+lv2_vg1 vg1  -wi-a-----  40.00m
+lv1_vg2 vg2  -wi-a-----   1.00g
+lv2_vg2 vg2  -wi-a-----  80.00m
+lv1_vg3 vg3  -wi-a-----   1.00g
+lv3_vg3 vg3  -wi-a----- 120.00m</code></pre>
+<p>If snapshot_lvm_snapset_name is set to "_snapset1", running the role
+will result in the following:</p>
+<pre class="text"><code>LV               VG   Attr       LSize   Pool Origin  Data%  Meta%  Move Log Cpy%Sync Convert
+home_snapset1    rhel swi-a-s--- 104.00m      home    0.00
+root_snapset1    rhel swi-a-s---   3.50g      root    0.01
+swap_snapset1    rhel swi-a-s--- 400.00m      swap    0.00
+home             rhel owi-aos---   1.00g
+root             rhel owi-aos---  35.00g
+swap             rhel owi-aos---  &lt;3.88g
+lv1_vg1_snapset1 vg1  swi-a-s--- 104.00m      lv1_vg1 0.00
+lv2_vg1_snapset1 vg1  swi-a-s---   8.00m      lv2_vg1 0.00
+lv1_vg1          vg1  owi-a-s---   1.00g
+lv2_vg1          vg1  owi-a-s---  40.00m
+lv1_vg2_snapset1 vg2  swi-a-s--- 104.00m      lv1_vg2 0.00
+lv2_vg2_snapset1 vg2  swi-a-s---  12.00m      lv2_vg2 0.00
+lv1_vg2          vg2  owi-a-s---   1.00g
+lv2_vg2          vg2  owi-a-s---  80.00m
+lv1_vg3_snapset1 vg3  swi-a-s--- 104.00m      lv1_vg3 0.00
+lv3_vg3_snapset1 vg3  swi-a-s---  16.00m      lv3_vg3 0.00
+lv1_vg3          vg3  owi-a-s---   1.00g
+lv3_vg3          vg3  owi-a-s--- 120.00m</code></pre>
+<h2
+id="snapshot_lvm_percent_space_required">snapshot_lvm_percent_space_required</h2>
+<p>This is required for check and snapshot actions if not using
+sets.</p>
+<p>See the LVM man page for lvcreate with the -s (snapshot) and -L
+(size) options. The snapshot role will ensure that there is at least
+snapshot_lvm_percent_space_required space available in the VG. When used
+inside of a snapset definition, use percent_space_required
+parameter.</p>
+<p>Note: LVM will round up size to full physical extent</p>
+<h2 id="snapshot_lvm_all_vgs">snapshot_lvm_all_vgs</h2>
+<p>This is a boolean value with default false. If true the role will
+snapshot all VGs on the target system. If false, the snapshot_lvm_vg or
+snapshot_lvm_set must be set.</p>
+<h2 id="snapshot_lvm_vg">snapshot_lvm_vg</h2>
+<p>If set, the role will create snapshots for all the logical volumes in
+the volume group. If snapshot_lvm_lv is also set, a snapshot will be
+created for only that logical volume in the volume group. If neither
+snapshot_lvm_all_vgs or snapshot_lvm_set are set, snapshot_lvm_vg is
+required. When used inside of a snapset definition, use vg
+parameter.</p>
+<h2 id="snapshot_lvm_lv">snapshot_lvm_lv</h2>
+<p>If set, the role will create snapshots for the single logical volume
+in the volume group specified by snapshot_lvm_vg. The parameter requires
+snapshot_lvm_vg is set to a valid volume group. When used inside of a
+snapset definition, use lv parameter.</p>
+<h2 id="snapshot_lvm_verify_only">snapshot_lvm_verify_only</h2>
+<p>If true, the check and remove commands verify that the system is in
+the correct state. For the remove command, the target system will be
+searched for any snapshots that would be removed by the remove command
+without snapshot_lvm_verify_only.</p>
+<p>snapshot_lvm_verify_only is intended to be used to double check that
+the snapshot or remove command have completed the operation
+correctly.</p>
+<h2
+id="snapshot_lvm_mountpoint_create">snapshot_lvm_mountpoint_create</h2>
+<p>If the mount point specified doesn't currently exist, create the
+mount point and any parent directories necessary for the mount point.
+When used inside of a snapset definition, use mountpoint_create
+parameter.</p>
+<h2 id="snapshot_lvm_mountpoint">snapshot_lvm_mountpoint</h2>
+<p>The mount target for the block device. When used inside of a snapset
+definition, use mountpoint parameter.</p>
+<h2 id="snapshot_lvm_mount_origin">snapshot_lvm_mount_origin</h2>
+<p>If set to true, mount the origin of the snapshot rather than the
+snapshot. When used inside of a snapset definition, use mount_origin
+parameter.</p>
+<h2 id="snapshot_lvm_mount_options">snapshot_lvm_mount_options</h2>
+<p>Options to pass to the mount command for the filesystem. The argument
+is a comma separated list. See the man page for mount for details. Note
+that XFS by default will not allow multiple filesystems with the same
+UUID to be mounted at the same time. Using the "nouuid" will bypass the
+duplicate UUID check and allow a snapshot to be mounted at the same time
+as the snapshot source.</p>
+<h2 id="snapshot_lvm_unmount_all">snapshot_lvm_unmount_all</h2>
+<p>If set to true, unmount all mountpoint for the resulting blockdevice.
+Linux allows filesystems to be mounted in multiple locations. Setting
+this flag will unmount all locations.</p>
+<h2 id="snapshot_lvm_vg_include">snapshot_lvm_vg_include</h2>
+<p>When using <code>snapshot_lvm_all_vgs</code>, there may be some
+subset of all volume groups that you want to use. Set
+<code>snapshot_lvm_vg_include</code> to a regex pattern that matches the
+names of the volume groups you want to use and the rest will be
+excluded. For example, <code>snapshot_lvm_vg_include: "^sql_db_"</code>
+will only operate on volume groups whose names start with
+<code>sql_db_</code>. This uses the Python <code>re.search</code>.</p>
+<h2 id="snapshot_lvm_bootable">snapshot_lvm_bootable</h2>
+<p>Boolean - default is false. Only supported on operating systems that
+support snapshot manager (snapm). When set to true, and passed to the
+'snapshot' command, the snapshot created will have a corresponding boot
+entry. The boot entry will be removed when the snapset is removed.</p>
+<h2 id="snapshot_use_copr-experimental">snapshot_use_copr
+(EXPERIMENTAL)</h2>
+<p>Boolean - default is unset - if you want to enable the copr repo to
+use the latest development version of snapm, use
+<code>snapshot_use_copr: true</code></p>
+<h2 id="variables-exported-by-the-role">Variables Exported by the
+Role</h2>
+<h3 id="snapshot_facts">snapshot_facts</h3>
+<p>Contains volume and mount point information for a given snapset.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;volumes&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vg3&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;VY7oRQ-zB1q-DzsP-1y7G-J3gL-ci1e-nQXwAy&quot;</span><span class="fu">,</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv1_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3/lv1_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg3/lv1_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;owi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;Yhn7RG-k7pM-ylf9-NNt8-xuGI-WwrF-i0Pf6T&quot;</span><span class="fu">,</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv1_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3/lv1_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg3/lv1_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;322961408&quot;</span><span class="fu">,</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;lv1_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;swi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;0.00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;NlwbxX-NhwK-IHTj-sV9k-ldZY-Twvj-2SiCVe&quot;</span><span class="fu">,</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv2_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3/lv2_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg3/lv2_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;owi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;j0RCzX-OVaA-MGDw-ejHO-Eu35-f4yG-VJL2Kr&quot;</span><span class="fu">,</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv2_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3/lv2_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg3/lv2_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;322961408&quot;</span><span class="fu">,</span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;lv2_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;swi-aos---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;0.66&quot;</span><span class="fu">,</span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;8kfTDY-22SL-4tC7-vTsR-1R63-zVzq-55qEL3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv3_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3/lv3_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg3/lv3_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;125829120&quot;</span><span class="fu">,</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;125829120&quot;</span><span class="fu">,</span></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;owi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;babChm-IzEN-Pf8q-1dxk-BJ9R-3kZb-u91utS&quot;</span><span class="fu">,</span></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv3_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3/lv3_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg3/lv3_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;41943040&quot;</span><span class="fu">,</span></span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;lv3_vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;125829120&quot;</span><span class="fu">,</span></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;swi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg3&quot;</span><span class="fu">,</span></span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;0.00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vg2&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;8uMuRW-1KCV-8FTJ-frhX-X39o-V15B-1uEC98&quot;</span><span class="fu">,</span></span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv1_vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg2/lv1_vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg2/lv1_vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;owi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;GGssIK-SHYI-to1m-MhVL-2BDk-PJ8X-dBnL7G&quot;</span><span class="fu">,</span></span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv1_vg2_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg2/lv1_vg2_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg2/lv1_vg2_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;322961408&quot;</span><span class="fu">,</span></span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;lv1_vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;swi-aos---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;20.97&quot;</span><span class="fu">,</span></span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;83A9VM-kVEy-sc60-kF14-gKGb-5Ryj-7yDyEG&quot;</span><span class="fu">,</span></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv2_vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg2/lv2_vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg2/lv2_vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;83886080&quot;</span><span class="fu">,</span></span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;83886080&quot;</span><span class="fu">,</span></span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;owi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;6tVL8A-U1x1-qqUt-WFVG-POsG-msFs-ZbbPq1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv2_vg2_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg2/lv2_vg2_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg2/lv2_vg2_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;29360128&quot;</span><span class="fu">,</span></span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;lv2_vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;83886080&quot;</span><span class="fu">,</span></span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;swi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;0.00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vg1&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;UnN0s0-TauJ-csnN-BgC1-3ocI-p8bE-jz0Hd8&quot;</span><span class="fu">,</span></span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv1_vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg1/lv1_vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg1/lv1_vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;owi-aos---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;5Np7N9-H15x-Go96-fIwL-E0GR-4fVB-clLDW2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv1_vg1_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg1/lv1_vg1_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg1/lv1_vg1_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;322961408&quot;</span><span class="fu">,</span></span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;lv1_vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;1073741824&quot;</span><span class="fu">,</span></span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;swi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;20.97&quot;</span><span class="fu">,</span></span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;P0LPUQ-CljS-hOEm-U749-yyr9-USE7-1qDc2N&quot;</span><span class="fu">,</span></span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv2_vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg1/lv2_vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg1/lv2_vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;41943040&quot;</span><span class="fu">,</span></span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;41943040&quot;</span><span class="fu">,</span></span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;owi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_uuid&quot;</span><span class="fu">:</span> <span class="st">&quot;FYIBRe-FDiW-PDUE-3l1y-mLzN-bLEg-qF12cz&quot;</span><span class="fu">,</span></span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_name&quot;</span><span class="fu">:</span> <span class="st">&quot;lv2_vg1_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_full_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg1/lv2_vg1_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_path&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/vg1/lv2_vg1_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_size&quot;</span><span class="fu">:</span> <span class="st">&quot;16777216&quot;</span><span class="fu">,</span></span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin&quot;</span><span class="fu">:</span> <span class="st">&quot;lv2_vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;origin_size&quot;</span><span class="fu">:</span> <span class="st">&quot;41943040&quot;</span><span class="fu">,</span></span>
+<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;pool_lv&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_tags&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span><span class="fu">,</span></span>
+<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;lv_attr&quot;</span><span class="fu">:</span> <span class="st">&quot;swi-a-s---&quot;</span><span class="fu">,</span></span>
+<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;vg_name&quot;</span><span class="fu">:</span> <span class="st">&quot;vg1&quot;</span><span class="fu">,</span></span>
+<span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;data_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;0.00&quot;</span><span class="fu">,</span></span>
+<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;metadata_percent&quot;</span><span class="fu">:</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;mounts&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb6-221"><a href="#cb6-221" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg3/lv1_vg3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-222"><a href="#cb6-222" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg3/lv1_vg3_snapset2&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-223"><a href="#cb6-223" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-224"><a href="#cb6-224" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;TARGET&quot;</span><span class="fu">:</span> <span class="st">&quot;/mnt/database&quot;</span><span class="fu">,</span></span>
+<span id="cb6-225"><a href="#cb6-225" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;SOURCE&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/mapper/vg3-lv1_vg3_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-226"><a href="#cb6-226" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;FSTYPE&quot;</span><span class="fu">:</span> <span class="st">&quot;xfs&quot;</span><span class="fu">,</span></span>
+<span id="cb6-227"><a href="#cb6-227" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;OPTIONS&quot;</span><span class="fu">:</span> <span class="st">&quot;rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota&quot;</span></span>
+<span id="cb6-228"><a href="#cb6-228" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb6-229"><a href="#cb6-229" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-230"><a href="#cb6-230" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg3/lv2_vg3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-231"><a href="#cb6-231" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg3/lv2_vg3_snapset2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-232"><a href="#cb6-232" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg3/lv3_vg3&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-233"><a href="#cb6-233" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg3/lv3_vg3_snapset2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-234"><a href="#cb6-234" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg2/lv1_vg2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-235"><a href="#cb6-235" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg2/lv1_vg2_snapset2&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-236"><a href="#cb6-236" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-237"><a href="#cb6-237" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;TARGET&quot;</span><span class="fu">:</span> <span class="st">&quot;/mnt/production_mnt&quot;</span><span class="fu">,</span></span>
+<span id="cb6-238"><a href="#cb6-238" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;SOURCE&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/mapper/vg2-lv1_vg2_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-239"><a href="#cb6-239" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;FSTYPE&quot;</span><span class="fu">:</span> <span class="st">&quot;xfs&quot;</span><span class="fu">,</span></span>
+<span id="cb6-240"><a href="#cb6-240" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;OPTIONS&quot;</span><span class="fu">:</span> <span class="st">&quot;rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota&quot;</span></span>
+<span id="cb6-241"><a href="#cb6-241" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb6-242"><a href="#cb6-242" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-243"><a href="#cb6-243" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg2/lv2_vg2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-244"><a href="#cb6-244" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg2/lv2_vg2_snapset2&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-245"><a href="#cb6-245" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg1/lv1_vg1&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-246"><a href="#cb6-246" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg1/lv1_vg1_snapset2&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb6-247"><a href="#cb6-247" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-248"><a href="#cb6-248" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;TARGET&quot;</span><span class="fu">:</span> <span class="st">&quot;/mnt/new_mountpoint&quot;</span><span class="fu">,</span></span>
+<span id="cb6-249"><a href="#cb6-249" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;SOURCE&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/mapper/vg1-lv1_vg1_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-250"><a href="#cb6-250" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;FSTYPE&quot;</span><span class="fu">:</span> <span class="st">&quot;xfs&quot;</span><span class="fu">,</span></span>
+<span id="cb6-251"><a href="#cb6-251" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;OPTIONS&quot;</span><span class="fu">:</span> <span class="st">&quot;rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota&quot;</span></span>
+<span id="cb6-252"><a href="#cb6-252" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb6-253"><a href="#cb6-253" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb6-254"><a href="#cb6-254" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;TARGET&quot;</span><span class="fu">:</span> <span class="st">&quot;/mnt/other_mp&quot;</span><span class="fu">,</span></span>
+<span id="cb6-255"><a href="#cb6-255" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;SOURCE&quot;</span><span class="fu">:</span> <span class="st">&quot;/dev/mapper/vg1-lv1_vg1_snapset2&quot;</span><span class="fu">,</span></span>
+<span id="cb6-256"><a href="#cb6-256" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;FSTYPE&quot;</span><span class="fu">:</span> <span class="st">&quot;xfs&quot;</span><span class="fu">,</span></span>
+<span id="cb6-257"><a href="#cb6-257" aria-hidden="true" tabindex="-1"></a>                <span class="dt">&quot;OPTIONS&quot;</span><span class="fu">:</span> <span class="st">&quot;rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota&quot;</span></span>
+<span id="cb6-258"><a href="#cb6-258" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb6-259"><a href="#cb6-259" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb6-260"><a href="#cb6-260" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg1/lv2_vg1&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb6-261"><a href="#cb6-261" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;/dev/vg1/lv2_vg1_snapset2&quot;</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb6-262"><a href="#cb6-262" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb6-263"><a href="#cb6-263" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h1 id="rpm-ostree">rpm-ostree</h1>
+<p>See README-ostree.md</p>
+<h1 id="license">License</h1>
+<p>MIT</p>
+</article>
+</body>
+</html>

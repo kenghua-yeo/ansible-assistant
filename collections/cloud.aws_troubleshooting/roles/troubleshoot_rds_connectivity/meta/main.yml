@@ -1,0 +1,3 @@
+---
+dependencies:
+  - role: cloud.aws_troubleshooting.aws_setup_credentials

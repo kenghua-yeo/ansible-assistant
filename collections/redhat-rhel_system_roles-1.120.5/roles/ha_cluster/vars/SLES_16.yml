@@ -1,0 +1,27 @@
+---
+
+# Variables specific to following versions:
+# - SUSE Linux Enterprise Server for SAP Applications 16
+# - SUSE Linux Enterprise Server 16
+
+__ha_cluster_zypper_patterns:
+  - ha_sles
+
+__ha_cluster_role_essential_packages:
+  - 'openssl'
+
+# Pattern ha_sles includes all important packages for cluster
+# Requires: SUSE Linux Enterprise High Availability Extension on SLES
+# - 'corosync'
+# - 'crmsh'
+# - 'csync2'
+# - 'pacemaker'
+# - 'resource-agents'
+# - 'sbd'
+# - 'chrony'
+# - 'fence-agents-sbd'
+# - 'lvm2-lockd'
+
+# Default totem transport configuration
+__ha_cluster_transport:
+  type: knet

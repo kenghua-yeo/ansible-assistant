@@ -1,0 +1,25 @@
+---
+- name: Manage storage.conf
+  when: podman_storage_conf | length > 0
+  vars:
+    __storage_parent_path: "{{ __podman_storage_conf_file | dirname }}"
+  block:
+    - name: Ensure storage.conf parent dir exists
+      file:
+        path: "{{ __storage_parent_path }}"
+        state: directory
+        owner: "{{ podman_run_as_user }}"
+        group: "{{ podman_run_as_group if podman_run_as_group is not none else omit }}"
+        mode: "{{ __podman_parent_mode if __storage_parent_path == __podman_parent_path else __podman_etc_containers_mode if podman_run_as_user == 'root' else __podman_user_containers_mode }}"
+
+    - name: Update storage config file
+      copy:
+        content: "{{ header + toml }}"
+        dest: "{{ __podman_storage_conf_file }}"
+        owner: "{{ podman_run_as_user }}"
+        group: "{{ podman_run_as_group if podman_run_as_group is not none else omit }}"
+        mode: "0644"
+      vars:
+        header: "{{ lookup('template', 'get_ansible_managed.j2') }}"
+        toml: "{{ podman_storage_conf | redhat.rhel_system_roles.podman_to_toml(podman_use_new_toml_formatter) }}"
+      register: __podman_storage_config_register

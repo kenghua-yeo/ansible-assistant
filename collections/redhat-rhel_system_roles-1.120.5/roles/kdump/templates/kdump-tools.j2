@@ -1,0 +1,6 @@
+{{ ansible_managed | comment }}
+{{ "system_role:kdump" | comment(prefix="", postfix="") }}
+
+{% for key, value in kdump_kdump_tools.items() %}
+{{ key }} = {{ value }}
+{% endfor %}

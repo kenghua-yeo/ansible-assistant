@@ -1,0 +1,84 @@
+---
+argument_specs:
+  main:
+    short_description: Auto-generated specs for aap_api_gather role - main entry point
+    description:
+      - Gathers diagnostic output from AAP component APIs (Controller, Hub, Gateway, EDA).
+    author:
+      - Lenny Shirley
+    options:
+      aap_api_gather_components:
+        description: List of aap api gather components items
+        type: list
+        default:
+          - controller
+          - hub
+          - gateway
+        elements: str
+        version_added: 0.1.0-devel
+      aap_api_gather_dest:
+        description: Configuration value for aap api gather dest
+        type: str
+        default: /tmp/aap_api_gathers
+        version_added: 0.1.0-devel
+      aap_api_gather_endpoints:
+        description: API endpoint URL (dictionary with default configuration) (defined in vars)
+        type: dict
+        default:
+          controller:
+            - /api/v2/ping/
+            - /api/v2/instances/
+            - /api/v2/settings/all/
+          hub:
+            - /pulp/api/v3/status/
+            - /pulp/api/v3/tasks/
+          eda: []
+        version_added: 0.1.0-devel
+      aap_hostname:
+        description: Hostname or IP address for AAP Controller/Gateway (configured with default value)
+        type: str
+        default: "{{ lookup('env', 'AAP_HOSTNAME') | default(lookup('env', 'CONTROLLER_HOST') | default(lookup('env', 'TOWER_HOST') | default(''))) }}"
+        version_added: 0.1.0-devel
+      aap_hub_url:
+        description: URL for AAP Hub (configured with default value)
+        type: str
+        default: "{{ lookup('env', 'AAP_HUB_URL') | default('') }}"
+        version_added: 0.1.0-devel
+      aap_eda_url:
+        description: URL for AAP EDA (configured with default value)
+        type: str
+        default: "{{ lookup('env', 'AAP_EDA_URL') | default('') }}"
+        version_added: 0.1.0-devel
+      aap_token:
+        description: Authentication token (configured with default value)
+        type: str
+        default: >-
+          {{
+            lookup('env', 'AAP_TOKEN') | default(
+              lookup('env', 'CONTROLLER_OAUTH_TOKEN') | default(
+                lookup('env', 'TOWER_OAUTH_TOKEN') | default('')
+              )
+            )
+          }}
+        version_added: 0.1.0-devel
+      aap_validate_certs:
+        description: SSL/TLS certificate (enabled by default)
+        type: bool
+        default: >-
+          {{
+            lookup('env', 'AAP_VALIDATE_CERTS') | default(
+              lookup('env', 'CONTROLLER_VERIFY_SSL') | default(
+                lookup('env', 'TOWER_VERIFY_SSL') | default('true')
+              )
+            ) | bool
+          }}
+        version_added: 0.1.0-devel
+      component_name:
+        description: 'Variable used in included task file: gather_apis.yml'
+        type: str
+        version_added: 0.1.0-devel
+      endpoint_path:
+        description: 'Variable used in included task file: gather_apis_component_loop.yml'
+        type: str
+        version_added: 0.1.0-devel
+...

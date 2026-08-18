@@ -1,0 +1,18 @@
+global(
+  workDirectory="{{ __rsyslog_work_dir }}"
+{% if ca_cert_path != '' %}
+  defaultNetstreamDriverCAFile="{{ ca_cert_path }}"
+{%   if cert_path != '' %}
+  defaultNetstreamDriverCertFile="{{ cert_path }}"
+{%   endif %}
+{%   if key_path != '' %}
+  defaultNetstreamDriverKeyFile="{{ key_path }}"
+{%   endif %}
+{% endif %}
+{% if logging_max_message_size is defined %}
+  maxMessageSize="{{ logging_max_message_size }}"
+{% endif %}
+{% if logging_preserve_fqdn %}
+  preserveFQDN="on"
+{% endif %}
+)

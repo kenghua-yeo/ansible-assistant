@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: MIT
+---
+# Put the role's internal variables here that are not distribution specific.
+# You can override these by defining the same variable with a different
+# value in a platform/version specific file in vars/
+
+# Examples of non-distribution specific (generic) internal variables:
+
+__fapolicyd_services: fapolicyd.service
+__fapolicyd_dir: /etc/fapolicyd
+__fapolicyd_conf: fapolicyd.conf
+
+__fapolicyd_packages: [fapolicyd]
+__fapolicyd_selinux_packages: [fapolicyd-selinux]
+
+# ansible_facts required by the role
+__fapolicyd_required_facts:
+  - discovered_interpreter_python
+  - distribution
+  - distribution_major_version
+  - distribution_version
+  - os_family
+
+__fapolicyd_no_subsets_facts:
+  - discovered_interpreter_python
+
+# the subsets of ansible_facts that need to be gathered in case any of the
+# facts in required_facts is missing; see the documentation of
+# the 'gather_subset' parameter of the 'setup' module
+__fapolicyd_required_facts_subsets: "{{ ['!all', '!min'] + __fapolicyd_required_facts | difference(__fapolicyd_no_subsets_facts) }}"
+
+# BEGIN - DO NOT EDIT THIS BLOCK - rh distros variables
+# Ansible distribution identifiers that the role treats like RHEL
+__fapolicyd_rh_distros:
+  - AlmaLinux
+  - CentOS
+  - RedHat
+  - Rocky
+
+# Same as above but includes Fedora
+__fapolicyd_rh_distros_fedora: "{{ __fapolicyd_rh_distros + ['Fedora'] }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone
+__fapolicyd_is_rh_distro: "{{ ansible_facts['distribution'] in __fapolicyd_rh_distros }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone, or Fedora
+__fapolicyd_is_rh_distro_fedora: "{{ ansible_facts['distribution'] in __fapolicyd_rh_distros_fedora }}"
+# END - DO NOT EDIT THIS BLOCK - rh distros variables

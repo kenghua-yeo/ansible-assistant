@@ -1,0 +1,60 @@
+---
+# Initialize variables
+- name: Initialize ports variables
+  set_fact:
+    logging_tls_tcp_ports: []
+    logging_tcp_ports: []
+    logging_tls_udp_ports: []
+    logging_udp_ports: []
+
+# Gather ports configured as logging role parameters
+- name: Get information about ports
+  when:
+    - (logging_manage_firewall | bool) or (logging_manage_selinux | bool)
+  block:
+    - name: Parameter 'port' values
+      set_fact:
+        logging_tls_tcp_ports: "{{ (logging_inputs + logging_outputs) | d([]) | selectattr('port', 'defined') | map(attribute='port') | list }}"
+
+    - name: Gather port values from outputs
+      vars:
+        __tcp_outputs: "{{ logging_outputs | d([]) | selectattr('tcp_port', 'defined') | list }}"
+      # list of ports where tls is not defined, or tls is false
+        __tcp_ports: "{{ ((__tcp_outputs | rejectattr('tls', 'defined') | list) + (__tcp_outputs | selectattr('tls', 'defined') | rejectattr('tls') | list)) | map(attribute='tcp_port') | list }}"
+      # list of ports where tls is defined and true
+        __tcp_tls_ports: "{{ __tcp_outputs | selectattr('tls', 'defined') | selectattr('tls') | map(attribute='tcp_port') | list }}"
+        __udp_outputs: "{{ logging_outputs | d([]) | selectattr('udp_port', 'defined') | list }}"
+        __udp_ports: "{{ ((__udp_outputs | rejectattr('tls', 'defined') | list) + (__udp_outputs | selectattr('tls', 'defined') | rejectattr('tls') | list)) | map(attribute='udp_port') | list }}"
+      # list of ports where tls is defined and true
+        __udp_tls_ports: "{{ __udp_outputs | selectattr('tls', 'defined') | selectattr('tls') | map(attribute='udp_port') | list }}"
+        __server_outputs: "{{ logging_outputs | d([]) | selectattr('server_port', 'defined') | list }}"
+        __server_ports: "{{ ((__server_outputs | rejectattr('tls', 'defined') | list) + (__server_outputs | selectattr('tls', 'defined') | rejectattr('tls') | list)) | map(attribute='server_port') | list }}"
+      # list of ports where tls is defined and true
+        __server_tls_ports: "{{ __server_outputs | selectattr('tls', 'defined') | selectattr('tls') | map(attribute='server_port') | list }}"
+      block:
+        - name: Update port values from outputs
+          set_fact:
+            logging_tcp_ports: "{{ (logging_tcp_ports + __tcp_ports + __server_ports) | unique | list }}"
+            logging_tls_tcp_ports: "{{ (logging_tls_tcp_ports + __tcp_tls_ports + __server_tls_ports) | unique | list }}"
+            logging_udp_ports: "{{ (logging_udp_ports + __udp_ports) | unique | list }}"
+            logging_tls_udp_ports: "{{ (logging_tls_udp_ports + __udp_tls_ports) | unique | list }}"
+
+    - name: Gather additional ports from inputs
+      vars:
+        __tcp_inputs: "{{ logging_inputs | d([]) | selectattr('tcp_ports', 'defined') | list }}"
+      # list of ports where tls is not defined, or tls is false
+        __tcp_ports: "{{ ((__tcp_inputs | rejectattr('tls', 'defined') | list) + (__tcp_inputs | selectattr('tls', 'defined') | rejectattr('tls') | list)) | map(attribute='tcp_ports') | flatten | unique | list }}"
+      # list of ports where tls is defined and true
+        __tcp_tls_ports: "{{ __tcp_inputs | selectattr('tls', 'defined') | selectattr('tls') | map(attribute='tcp_ports') | flatten | unique | list }}"
+        __udp_inputs: "{{ logging_inputs | d([]) | selectattr('udp_port', 'defined') | list }}"
+      # list of ports where tls is not defined, or tls is false
+        __udp_ports: "{{ ((__udp_inputs | rejectattr('tls', 'defined') | list) + (__udp_inputs | selectattr('tls', 'defined') | rejectattr('tls') | list)) | map(attribute='udp_ports') | flatten | unique | list }}"
+      # list of ports where tls is defined and true
+        __udp_tls_ports: "{{ __udp_inputs | selectattr('tls', 'defined') | selectattr('tls') | map(attribute='udp_ports') | flatten | unique | list }}"
+      block:
+        - name: Update port values from inputs
+          set_fact:
+            logging_tcp_ports: "{{ (logging_tcp_ports + __tcp_ports) | unique | list }}"
+            logging_tls_tcp_ports: "{{ (logging_tls_tcp_ports + __tcp_tls_ports) | unique | list }}"
+            logging_udp_ports: "{{ (logging_udp_ports + __udp_ports) | unique | list }}"
+            logging_tls_udp_ports: "{{ (logging_tls_udp_ports + __udp_tls_ports) | unique | list }}"

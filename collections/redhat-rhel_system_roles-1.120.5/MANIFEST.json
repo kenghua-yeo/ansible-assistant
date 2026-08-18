@@ -1,0 +1,44 @@
+{
+ "collection_info": {
+  "namespace": "redhat",
+  "name": "rhel_system_roles",
+  "version": "1.120.5",
+  "authors": [
+   "System Roles Owners <systemroles@lists.fedorahosted.org>"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "system",
+   "collection",
+   "infrastructure",
+   "linux",
+   "monitoring",
+   "networking",
+   "security",
+   "storage"
+  ],
+  "description": "Red Hat Enterprise Linux System Roles Ansible Collection",
+  "license": [
+   "GPL-2.0-or-later",
+   "GPL-3.0-only",
+   "GPL-3.0-or-later",
+   "LGPL-3.0-only",
+   "MIT",
+   "BSD-3-Clause"
+  ],
+  "license_file": null,
+  "dependencies": {},
+  "repository": "https://linux-system-roles.github.io",
+  "documentation": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/automating_system_administration_by_using_rhel_system_roles/index",
+  "homepage": "https://access.redhat.com/articles/3050101",
+  "issues": "https://issues.redhat.com/secure/CreateIssueDetails!init.jspa?pid=12332745&summary=Your%20request%20summary&issuetype=1&priority=10200&labels=Partner-Feature-Request&components=12380283"
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "36afba6b333487a1f5d3456e382141545cd87f6779fca29b27f63b03d459e2e3",
+  "format": 1
+ },
+ "format": 1
+}

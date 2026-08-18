@@ -1,0 +1,53 @@
+---
+- name: Verify required variables
+  block:
+    - name: Fail when plan variables are not defined
+      ansible.builtin.fail:
+        msg: "Required variable {{ item }} has not been defined"
+      when: vars[item] is undefined
+      loop:
+        - backup_create_plan_plan_name
+        - backup_create_plan_plan_rules
+
+- name: Run backup_create_plan_role
+  module_defaults:
+    group/aws: "{{ aws_setup_credentials__output }}"
+  block:
+    - name: Create or update backup vault
+      block:
+        - name: Create or update backup vault
+          amazon.aws.backup_vault:
+            state: present
+            backup_vault_name: "{{ backup_create_plan_vault_name }}"
+            encryption_key_arn: "{{ backup_create_plan_vault_encryption_key_arn | default(omit) }}"
+            tags: "{{ backup_create_plan_vault_tags | default(omit) }}"
+          register: backup_create_plan_backup_vault_result
+
+        - name: Verify that vault has been created/updated
+          ansible.builtin.debug:
+            msg: Vault '{{ backup_create_plan_vault_name }}' successfully created/updated.
+          when: backup_create_plan_backup_vault_result is changed
+
+        - name: Verify that vault already exists
+          ansible.builtin.debug:
+            msg: Vault '{{ backup_create_plan_vault_name }}' exists, no updates needed.
+          when: backup_create_plan_backup_vault_result is not changed
+
+    - name: Create or update backup plan
+      amazon.aws.backup_plan:
+        state: present
+        backup_plan_name: "{{ backup_create_plan_plan_name }}"
+        rules: "{{ backup_create_plan_plan_rules }}"
+        advanced_backup_settings: "{{ backup_create_plan_plan_windows_vss_settings | default(omit) }}"
+        tags: "{{ backup_create_plan_plan_tags | default(omit) }}"
+      register: backup_create_plan_backup_plan_result
+
+    - name: Verify that plan has been created/updated
+      ansible.builtin.debug:
+        msg: Plan '{{ backup_create_plan_plan_name }}' successfully created/updated.
+      when: backup_create_plan_backup_plan_result is changed
+
+    - name: Verify that plan already exists
+      ansible.builtin.debug:
+        msg: Plan '{{ backup_create_plan_plan_name }}' exists, no updates needed.
+      when: backup_create_plan_backup_plan_result is not changed

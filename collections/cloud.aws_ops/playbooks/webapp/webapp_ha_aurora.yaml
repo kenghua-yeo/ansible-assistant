@@ -1,0 +1,133 @@
+---
+- name: Configure inventory for High availability Aurora cluster
+  hosts: localhost
+  gather_facts: false
+
+  vars_files:
+    - vars/main.yaml
+
+  tasks:
+    - name: Add different hosts
+      ansible.builtin.add_host:
+        groups:
+          - aurora
+        name: "aurora_{{ item.region }}"
+        ansible_connection: local
+        region: "{{ item.region }}"
+        ansible_python_interpreter: "{{ ansible_python_interpreter }}"
+        deploy_flask_app_bastion_ssh_private_key_path: "~/.{{ resource_prefix }}{{ item.region }}_id_rsa"
+        rds_cluster_name: "{{ item.rds_cluster_name }}"
+      with_items:
+        - region: "{{ rds_primary_cluster_region }}"
+          rds_cluster_name: "{{ rds_primary_cluster_instance_name }}"
+        - region: "{{ rds_replica_cluster_region }}"
+          rds_cluster_name: "{{ rds_replica_cluster_instance_name }}"
+
+- name: Webapp HA
+  hosts: aurora
+  gather_facts: false
+  strategy: free
+
+  vars_files:
+    - vars/main.yaml
+
+  tasks:
+    - name: Create resources in region
+      ansible.builtin.include_tasks: tasks/create.yaml
+      when: operation == "create"
+      vars:
+        rds_instance_class: db.r5.large
+        rds_engine: aurora-postgresql
+
+- name: Create Aurora db cluster
+  hosts: localhost
+
+  vars_files:
+    - vars/main.yaml
+
+  tasks:
+    - name: Create  Aurora db cluster
+      ansible.builtin.import_tasks: tasks/create_aurora_db_cluster.yaml
+      when: operation == "create"
+      vars:
+        rds_instance_class: db.r5.large
+        rds_engine: aurora-postgresql
+
+- name: Deploy application into regions
+  hosts: localhost
+  gather_facts: false
+
+  vars_files:
+    - vars/main.yaml
+
+  tasks:
+    - name: Deploy application and add Route53 records
+      when: operation == "create"
+      block:
+        - name: Deploy application into primary region
+          ansible.builtin.import_tasks: tasks/deploy_app_into_region.yaml
+          vars:
+            region: "{{ rds_primary_cluster_region }}"
+            rds_cluster_name: "{{ rds_primary_cluster_instance_name }}"
+            deploy_flask_app_bastion_ssh_private_key_path: "~/.{{ resource_prefix }}{{ rds_primary_cluster_region }}_id_rsa"
+
+        - name: Get load balancer name from the primary region
+          ansible.builtin.set_fact:
+            primary_lb: "{{ deploy_flask_app_lb_result }}"
+
+        - name: Deploy application into replica region
+          ansible.builtin.import_tasks: tasks/deploy_app_into_region.yaml
+          vars:
+            region: "{{ rds_replica_cluster_region }}"
+            rds_cluster_name: "{{ rds_replica_cluster_instance_name }}"
+            deploy_flask_app_bastion_ssh_private_key_path: "~/.{{ resource_prefix }}{{ rds_replica_cluster_region }}_id_rsa"
+
+        - name: Get load balancer name from the replica region
+          ansible.builtin.set_fact:
+            replica_lb: "{{ deploy_flask_app_lb_result }}"
+
+        - name: Add Route53 configurations
+          ansible.builtin.include_tasks: tasks/add_route53_records.yaml
+
+# ================================================================================
+
+- name: Delete Route53 records and Aurora cluster
+  hosts: localhost
+  gather_facts: false
+
+  vars_files:
+    - vars/main.yaml
+
+  tasks:
+    - name: Delete Route 53 records and health checks
+      ansible.builtin.import_tasks: tasks/delete_route53_records.yaml
+      when: operation == "delete"
+
+    - name: Delete Aurora DB
+      ansible.builtin.include_role:
+        name: cloud.aws_ops.create_rds_global_cluster
+      when: operation == "delete"
+      vars:
+        create_rds_global_cluster_operation: delete
+        create_rds_global_cluster_global_cluster_name: "{{ rds_global_cluster_name }}"
+        create_rds_global_cluster_primary_cluster_name: "{{ rds_primary_cluster_name }}"
+        create_rds_global_cluster_primary_cluster_region: "{{ rds_primary_cluster_region }}"
+        create_rds_global_cluster_primary_cluster_instance_name: "{{ rds_primary_cluster_instance_name }}"
+        create_rds_global_cluster_replica_cluster_name: "{{ rds_replica_cluster_name }}"
+        create_rds_global_cluster_replica_cluster_region: "{{ rds_replica_cluster_region }}"
+        create_rds_global_cluster_replica_cluster_instance_name: "{{ rds_replica_cluster_instance_name }}"
+
+- name: Delete EC2 resources
+  hosts: aurora
+  gather_facts: false
+  strategy: free
+
+  vars_files:
+    - vars/main.yaml
+
+  tasks:
+    - name: Delete all resources
+      ansible.builtin.include_tasks: tasks/delete.yaml
+      when: operation == "delete"
+      vars:
+        rds_identifier: "{{ rds_cluster_name }}"

@@ -1,0 +1,67 @@
+---
+- name: Set platform/version specific variables
+  include_tasks: set_vars.yml
+
+- name: Ensure required packages are installed
+  package:
+    name: "{{ __ssh_packages + ssh_additional_packages }}"
+    state: present
+    use: "{{ (__ssh_is_ostree | d(false)) | ternary('redhat.rhel_system_roles.rhel_rpm_ostree', omit) }}"
+  register: ssh_package_result
+
+- name: Handle reboot for transactional update systems
+  when:
+    - __ssh_is_transactional | d(false)
+    - ssh_package_result is changed
+  block:
+    - name: Notify user that reboot is needed to apply changes
+      debug:
+        msg: >
+          Reboot required to apply changes due to transactional updates.
+
+    - name: Reboot transactional update systems
+      reboot:
+        msg: Rebooting the system to apply transactional update changes.
+      when: ssh_transactional_update_reboot_ok | bool
+
+    - name: Fail if reboot is needed and not set
+      fail:
+        msg: >
+          Reboot is required but not allowed. Please set
+          'ssh_transactional_update_reboot_ok' to proceed.
+      when:
+        - ssh_transactional_update_reboot_ok is none
+
+- name: Gather information about the user for user configuration
+  getent:
+    database: passwd
+    key: "{{ ssh_user }}"
+  when:
+    - ssh_user is not none
+
+- name: Make sure the ~/.ssh/ directory exists and has expected permissions
+  file:
+    path: "{{ ansible_facts['getent_passwd'][ssh_user][4] }}/.ssh/"
+    state: directory
+    mode: "0700"
+    owner: "{{ ssh_user }}"
+    group: "{{ ssh_user }}"
+  when:
+    - ssh_user is not none
+    - ansible_facts['getent_passwd'] is defined
+
+- name: Generate the configuration file
+  template:
+    src: "ssh_config.j2"
+    dest: "{{ __ssh_config_file | trim }}"
+    owner: "{{ __ssh_config_owner | trim }}"
+    group: "{{ __ssh_config_group | trim }}"
+    mode: "{{ __ssh_config_mode | trim }}"
+    validate: "{{ __ssh_supports_validate | ternary('ssh -G -F %s example.com', 'true %s') }}"
+    backup: "{{ ssh_backup }}"
+  vars:
+    __ssh_skip_defaults: "{{ ssh_skip_defaults if ssh_skip_defaults != 'auto' else (ssh_user is not none) or (ssh_drop_in_name is not none and __ssh_supports_drop_in) }}"
+    __ssh_config_file: "{{ ssh_config_file if ssh_config_file is not none else ansible_facts['getent_passwd'][ssh_user][4] ~ '/.ssh/config' if ssh_user is not none and ansible_facts['getent_passwd'] is defined else __ssh_drop_in_template | replace('{name}', ssh_drop_in_name) if ssh_drop_in_name is not none and __ssh_supports_drop_in else '/etc/ssh/ssh_config' }}"
+    __ssh_config_owner: "{{ ssh_config_owner if ssh_config_owner is not none else ssh_user if ssh_user is not none else 'root' }}"
+    __ssh_config_group: "{{ ssh_config_group if ssh_config_group is not none else ssh_user if ssh_user is not none and ansible_facts['getent_passwd'] is defined else 'root' }}"
+    __ssh_config_mode: "{{ ssh_config_mode if ssh_config_mode is not none else '0600' if ssh_user is not none else '0644' }}"

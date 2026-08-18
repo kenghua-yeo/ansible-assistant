@@ -1,0 +1,40 @@
+---
+- name: Case Updates Loop | Assert case_updates_needed is provided
+  ansible.builtin.assert:
+    that:
+      - case_updates_needed is defined
+      - case_updates_needed is not none
+      - case_updates_needed | length > 0
+    fail_msg: >-
+      [FATAL] The case_updates_needed list is missing or empty.
+      Please provide a list of updates (attachments and/or comments) to apply.
+    success_msg: "Successfully validated case_updates_needed list with {{ case_updates_needed | length }} item(s)"
+  run_once: true
+
+- name: Case Updates Loop | Print on screen role execution status.
+  ansible.builtin.debug:
+    msg:
+      - "{{ rh_case_separator_char * (message_text | length + rh_case_default_message_padding) | int }}"
+      - " {{ message_text }} "
+      - "{{ rh_case_separator_char * (message_text | length + rh_case_default_message_padding) | int }}"
+  vars:
+    message_text: "Starting Case Updates Loop for Case ID {{ case_id }}"
+  run_once: true
+
+- name: Case Updates Loop | Process updates
+  loop: "{{ case_updates_needed }}"
+  loop_control:
+    label: "Processing update item"
+    loop_var: case_update
+  ansible.builtin.include_tasks: 6-process_update.yml
+
+- name: Case Updates Loop | Print on screen role case updates loop complete.
+  ansible.builtin.debug:
+    msg:
+      - "{{ rh_case_separator_char * (message_text | length + rh_case_default_message_padding) | int }}"
+      - " {{ message_text }} "
+      - "{{ rh_case_separator_char * (message_text | length + rh_case_default_message_padding) | int }}"
+  vars:
+    message_text: "Completed Case Updates Loop for Case ID {{ case_id }}"
+  run_once: true
+...

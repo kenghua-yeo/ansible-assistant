@@ -1,0 +1,68 @@
+---
+# tasks file for windows_manage_iis/delete
+
+- name: Query Server
+  ansible.windows.win_powershell:
+    script: |
+      Get-Website -Name {{ windows_manage_iis_name }}
+  register: windows_manage_iis_powershell_result
+
+- name: Fail if server doesn't exist
+  ansible.builtin.fail:
+    msg: "{{ windows_manage_iis_name }} Doesn't exist."
+  when:
+    - windows_manage_iis_powershell_result.output | length != 1
+
+- name: Set Facts
+  ansible.builtin.set_fact:
+    windows_manage_iis_path: "{{ windows_manage_iis_powershell_result.output[0].physicalPath }}"
+    windows_manage_iis_port: "{{ (windows_manage_iis_powershell_result.output[0].bindings.Collection | regex_search(':([0-9]+):', '\\1'))[0] }}"
+
+- name: Close port for site on the firewall
+  community.windows.win_firewall_rule:
+    name: "iisport{{ windows_manage_iis_port }}"
+    state: absent
+  register: windows_manage_iis_output
+
+- name: Update Results w/win_firewall_rule
+  ansible.builtin.set_fact:
+    windows_manage_iis_results: "{{ windows_manage_iis_results | default({}) | combine({'win_firewall_rule': windows_manage_iis_output}) }}"
+
+- name: Delete IIS site
+  microsoft.iis.website:
+    name: "{{ windows_manage_iis_name }}"
+    state: absent
+  notify: Restart iis service
+  register: windows_manage_iis_output
+
+- name: Update Results w/win_iis_website
+  ansible.builtin.set_fact:
+    windows_manage_iis_results: "{{ windows_manage_iis_results | default({}) | combine({'win_iis_website': windows_manage_iis_output}) }}"
+
+- name: Delete site directory structure
+  ansible.windows.win_file:
+    path: "{{ windows_manage_iis_path }}"
+    state: absent
+  register: windows_manage_iis_output
+
+- name: Update Results w/win_file
+  ansible.builtin.set_fact:
+    windows_manage_iis_results: "{{ windows_manage_iis_results | default({}) | combine({'win_file': windows_manage_iis_output}) }}"
+
+- name: Remove IIS Service
+  ansible.windows.win_feature:
+    name: Web-Server
+    state: absent
+  when:
+    - windows_manage_iis_delete_option == 'all'
+  register: windows_manage_iis_output
+
+- name: Update Results w/win_feature
+  ansible.builtin.set_fact:
+    windows_manage_iis_results: "{{ windows_manage_iis_results | default({}) | combine({'win_feature': windows_manage_iis_output}) }}"
+  when:
+    - windows_manage_iis_delete_option == 'all'
+
+- name: Show results
+  ansible.builtin.debug:
+    var: windows_manage_iis_results

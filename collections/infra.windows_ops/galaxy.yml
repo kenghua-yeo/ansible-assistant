@@ -1,0 +1,28 @@
+---
+namespace: infra
+name: windows_ops
+version: 2.0.1
+authors:
+  - Ansible (https://github.com/ansible)
+description: A collection of content (roles, playbooks, etc) for Ansible Automation Platform on Windows. Includes infrastructure management, IIS web server management, service management, Windows updates, and security compliance automation (CIS benchmarks and DISA STIG).
+documentation: ''
+homepage: https://github.com/redhat-cop/infra.windows_ops
+issues: https://github.com/redhat-cop/infra.windows_ops/issues
+license_file: LICENSE
+readme: README.md
+repository: https://github.com/redhat-cop/infra.windows_ops
+tags:
+  - windows
+  - infrastructure
+  - security
+  - compliance
+  - hardening
+dependencies:
+  ansible.windows: '>=3.0.0'
+  microsoft.iis: '>=1.0.2'
+  community.windows: '>=3.0.0'
+build_ignore:
+  - '.tox'
+  - '.git'
+  - '.github'
+  - '.gitignore'

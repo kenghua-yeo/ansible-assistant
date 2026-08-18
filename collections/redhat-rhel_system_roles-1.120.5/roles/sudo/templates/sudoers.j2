@@ -1,0 +1,112 @@
+{%- macro render_aliases(alias_desc,alias_str,alias_dict,alias_subdict_name) %}
+{% if item.aliases[alias_dict] is defined %}
+
+## {{ alias_desc }}
+{%   for alias_item in item.aliases[alias_dict] %}
+{{ alias_str }}    {{ alias_item.name }} = {{ alias_item[alias_subdict_name] | join(", ") }}
+{%   endfor %}
+{% else %}
+{{- '' -}}
+{% endif %}
+{%- endmacro -%}
+{%- macro render_override_spec(spec,spec_type, spec_dict, sign) %}
+{% if spec.type == spec_type %}
+Defaults{{ sign }} {{ spec[spec_dict] | join(", ") }} {{ spec.defaults | join(", ") }}
+{% else %}
+{{- '' -}}
+{% endif %}
+{%- endmacro -%}
+{{ ansible_managed | default('Ansible managed') | comment }}
+{{ "system_role:sudo" | comment(prefix="", postfix="") }}
+{%- if item.defaults is defined %}
+
+# Default specifications
+{%   for default in item.defaults %}
+{%     if default is mapping %}
+{%       for name, values in default.items() %}
+{%         if name == 'secure_path' %}
+Defaults    {{ name }} = {{ values | join(":") }}
+{%         else %}
+{%           for items in values | list | slice(6) %}
+{%             if items %}
+{%               if loop.first %}
+Defaults    {{ name }} = "{{ items | list | join(' ') }}"
+{%               else %}
+Defaults    {{ name }} += "{{ items | list | join(' ') }}"
+{%               endif -%}
+{%             endif -%}
+{%           endfor %}
+{%         endif %}
+{%       endfor %}
+{%     elif default | first == ':' %}
+Defaults{{ default }}
+{%     else %}
+Defaults    {{ default }}
+{%     endif %}
+{%   endfor %}
+{% endif -%}
+{%- if item.aliases is defined %}
+
+# Alias specifications
+{{ render_aliases("Command Aliases", "Cmnd_Alias", "cmnd_alias", "commands") -}}
+{{ render_aliases("Host Aliases", "Host_Alias", "host_alias", "hosts") -}}
+{{ render_aliases("Runas Aliases", "Runas_Alias", "runas_alias", "users") -}}
+{{ render_aliases("User Aliases", "User_Alias", "user_alias", "users") -}}
+{% endif -%}
+{%- if item.user_specifications is defined %}
+
+# User specifications
+{%   for spec in item.user_specifications %}
+{%     if spec.users is defined and spec.users | length > 0
+          and spec.hosts is defined and spec.hosts | length > 0
+          and spec.commands is defined and spec.commands | length > 0 %}
+{{ spec.users | join(", ") }} {{ spec.hosts | join(", ") }}=
+{%- if spec.operators is defined and spec.operators | length > 0 -%}
+({{ spec.operators | join(", ") }})
+{%- endif -%}
+{%- if spec.selinux_type is defined and spec.selinux_type | length > 0 %}
+ TYPE={{ spec.selinux_type if spec.selinux_type is string else spec.selinux_type[0] }}
+{%- endif -%}
+{%- if spec.selinux_role is defined and spec.selinux_role | length > 0 %}
+ ROLE={{ spec.selinux_role if spec.selinux_role is string else spec.selinux_role[0] }}
+{%- endif -%}
+{%- if spec.solaris_privs is defined and spec.solaris_privs | length > 0 %}
+ PRIVS={{ spec.solaris_privs | join(",") }}
+{%- endif -%}
+{%- if spec.solaris_limitprivs is defined and spec.solaris_limitprivs | length > 0 %}
+ LIMITPRIVS={{ spec.solaris_limitprivs | join(",") }}
+{%- endif -%}
+{%- if spec.tags is defined and spec.tags | length > 0 -%}
+{{ spec.tags | join(":") }}:
+{%- endif -%}
+{{ " " + spec.commands | join(", ") }}
+{%     endif %}
+{%   endfor %}
+{% endif -%}
+{%- if item.default_overrides is defined %}
+
+# Default override specifications
+{%   for spec in item.default_overrides %}
+{{ render_override_spec(spec,"user","users",":") -}}
+{{ render_override_spec(spec,"runas","operators",">") -}}
+{{ render_override_spec(spec,"host","hosts","@") -}}
+{{ render_override_spec(spec,"command","commands","!") -}}
+{%   endfor %}
+{%- endif %}
+{%- if item.include_files is defined or item.include_directories is defined %}
+
+# Includes
+{%   if item.include_files is defined and item.include_files | length > 0 %}
+## Include files
+{%     for file in item.include_files %}
+#include {{ file }}
+{%     endfor %}
+{%   endif %}
+{%   if item.include_directories is defined and item.include_directories |
+       length > 0 %}
+## Include directories
+{%     for dir in item.include_directories %}
+#includedir {{ dir }}
+{%     endfor %}
+{%   endif %}
+{% endif -%}

@@ -1,0 +1,27 @@
+---
+# Default variables for ocp_must_gather role
+
+# Temporary directory on the execution host (where 'oc' runs)
+ocp_must_gather_dest_dir: "/tmp/must-gather-output"
+
+# Custom must-gather image (default is none, uses cluster default)
+ocp_must_gather_image: ""
+
+# Additional options for the oc adm must-gather command
+ocp_must_gather_options: ""
+
+# Whether to validate SSL certificates when connecting to the OpenShift cluster
+ocp_must_gather_validate_ssl: true
+
+# Character used for separating log blocks
+ocp_must_gather_separator_char: "*"
+
+# Define a standard length for the calculation (must be an integer)
+ocp_must_gather_default_message_padding: 4
+
+# NEW: Flag to enable disconnected environment logic
+ocp_must_gather_disconnected_mode: false
+
+# NEW: Custom registry address if disconnected mode is true
+ocp_must_gather_disconnected_registry: ""
+...

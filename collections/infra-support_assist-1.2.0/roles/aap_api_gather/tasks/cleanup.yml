@@ -1,0 +1,41 @@
+---
+# Tasks to clean up past files dumped by this role
+
+- name: Cleanup | Set fact for the source directory path
+  ansible.builtin.set_fact:
+    __aap_api_gather_source_path: "{{ aap_api_gather_dest }}/{{ inventory_hostname }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: Cleanup | Remove entire source directory with all JSON files
+  ansible.builtin.file:
+    path: "{{ __aap_api_gather_source_path }}"
+    state: absent
+  delegate_to: localhost
+  run_once: true
+  when: aap_api_gather_cleanup_json | default(true) | bool
+
+- name: Cleanup | Remove old archive files (if cleanup_archives is enabled) # noqa: var-naming[no-role-prefix]
+  ansible.builtin.find:
+    paths: "{{ aap_api_gather_dest }}"
+    patterns:
+      - "aap-api-gather-*.tar.gz"
+    recurse: false
+  register: __old_archive_files
+  delegate_to: localhost
+  run_once: true
+  failed_when: false
+  when: aap_api_gather_cleanup_archives | default(false) | bool
+
+- name: Cleanup | Delete old archive files
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ __old_archive_files.files | default([]) }}"
+  delegate_to: localhost
+  run_once: true
+  when:
+    - aap_api_gather_cleanup_archives | default(false) | bool
+    - __old_archive_files.files is defined
+    - __old_archive_files.files | length > 0
+...

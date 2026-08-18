@@ -1,0 +1,37 @@
+# --- Main Task File for OCP Must Gather Role (Workflow Structure) ---
+---
+- name: Main | Print on screen role initiation status.
+  ansible.builtin.debug:
+    msg:
+      - "{{ ocp_must_gather_separator_char * (message_text | length + ocp_must_gather_default_message_padding) | int }}"
+      - " {{ message_text }} "
+      - "{{ ocp_must_gather_separator_char * (message_text | length + ocp_must_gather_default_message_padding) | int }}"
+  vars:
+    message_text: "Starting OCP Must Gather Collection Role Execution"
+  run_once: true
+
+- name: Main | Include Variable and Local Assertions
+  ansible.builtin.include_tasks: 1-assert_vars.yml
+
+- name: Main | Include Login to OpenShift Cluster
+  ansible.builtin.include_tasks: 2-login.yml
+
+- name: Main | Include Cluster Assertions
+  ansible.builtin.include_tasks: 3-assert_cluster.yml
+
+- name: Main | Include Generate Must Gather
+  ansible.builtin.include_tasks: 4-generate.yml
+
+- name: Main | Include Fetch Must Gather Archive
+  ansible.builtin.include_tasks: 5-fetch.yml
+
+- name: Main | Print on screen role completion status.
+  ansible.builtin.debug:
+    msg:
+      - "{{ ocp_must_gather_separator_char * (message_text | length + ocp_must_gather_default_message_padding) | int }}"
+      - " {{ message_text }} "
+      - "{{ ocp_must_gather_separator_char * (message_text | length + ocp_must_gather_default_message_padding) | int }}"
+  vars:
+    message_text: "OCP Must Gather Collection Role Execution Completed Successfully"
+  run_once: true
+...

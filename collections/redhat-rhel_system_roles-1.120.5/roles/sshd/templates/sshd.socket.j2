@@ -1,0 +1,38 @@
+[Unit]
+Description=OpenBSD Secure Shell server socket
+Documentation=man:sshd(8) man:sshd_config(5)
+{% if __sshd_socket_accept %}
+Conflicts={{ sshd_service }}.service
+{% else %}
+Before=sockets.target
+{% endif %}
+
+[Socket]
+{% set ports = __sshd_ports_from_config if __sshd_ports_from_config | type_debug == "list" else __sshd_ports_from_config | from_json %}
+{% set addrs = __sshd_listen_addresses_from_config if __sshd_listen_addresses_from_config | type_debug == "list" else __sshd_listen_addresses_from_config | from_json %}
+{% for port in ports %}
+{%  if addrs != ["0.0.0.0", "[::]"] or __sshd_socket_expanded_listen %}
+{%   for addr in addrs %}
+ListenStream={{ addr }}:{{ port }}
+{%   endfor %}
+{%  else %}
+ListenStream={{ port }}
+{%  endif %}
+{% endfor %}
+{% if __sshd_socket_bind_ipv6only %}
+BindIPv6Only=ipv6-only
+{% endif %}
+{% if __sshd_socket_accept %}
+Accept=yes
+{% else %}
+Accept=no
+{% endif %}
+{% if __sshd_socket_freebind is not none %}
+FreeBind={{ 'yes' if __sshd_socket_freebind else 'no' }}
+{% endif %}
+
+[Install]
+WantedBy=sockets.target
+{% if __sshd_socket_required_by is not none %}
+RequiredBy={{ __sshd_socket_required_by }}
+{% endif %}

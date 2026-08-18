@@ -1,0 +1,129 @@
+---
+# Default variables for the aap_api_gather role
+# Role-specific variables (prefixed with role name to avoid precedence conflicts)
+# These variables read from extra_vars first, then environment variables, with normalization applied
+
+# Hostname for AAP Controller/Gateway (Required for controller/gateway components - must be provided via extra-vars or ENV)
+# Priority: extra_vars (aap_hostname) > AAP_HOSTNAME > CONTROLLER_HOST > TOWER_HOST
+# Protocol stripping is applied automatically
+aap_api_gather_aap_hostname: >-
+  {{
+    (
+      aap_hostname | default(
+        lookup('env', 'AAP_HOSTNAME') | default(
+          lookup('env', 'CONTROLLER_HOST') | default(
+            lookup('env', 'TOWER_HOST') | default('')
+          )
+        )
+      )
+    ) |
+    trim |
+    replace('https://', '') |
+    replace('http://', '') |
+    regex_replace('/.*$', '')
+  }}
+
+# Hub URL (Required if hub component is selected - must be provided via extra-vars or ENV)
+# Priority: extra_vars (aap_hub_url) > AAP_HUB_URL
+# Protocol stripping is applied automatically
+# Fallback to aap_hostname is handled in gather_apis.yml task
+aap_api_gather_aap_hub_url: >-
+  {{
+    (
+      aap_hub_url | default(
+        lookup('env', 'AAP_HUB_URL') | default('')
+      )
+    ) |
+    trim |
+    replace('https://', '') |
+    replace('http://', '')
+  }}
+
+# EDA URL (Required if eda component is selected - must be provided via extra-vars or ENV)
+# Priority: extra_vars (aap_eda_url) > AAP_EDA_URL
+# Protocol stripping is applied automatically
+# Fallback to aap_hostname is handled in gather_apis.yml task
+aap_api_gather_aap_eda_url: >-
+  {{
+    (
+      aap_eda_url | default(
+        lookup('env', 'AAP_EDA_URL') | default('')
+      )
+    ) |
+    trim |
+    replace('https://', '') |
+    replace('http://', '')
+  }}
+
+# API Token (Required - must be provided via extra-vars, ENV, or set by aap_api_token role)
+# Note: aap_api_token role sets aap_token as a fact, so it should be available when that role runs first
+# Priority: aap_token fact > extra_vars (aap_token) > AAP_TOKEN > CONTROLLER_OAUTH_TOKEN > TOWER_OAUTH_TOKEN
+aap_api_gather_aap_token: >-
+  {{
+    aap_api_token_aap_token | default(aap_token) | default(
+      lookup('env', 'AAP_TOKEN') | default(
+        lookup('env', 'CONTROLLER_OAUTH_TOKEN') | default(
+          lookup('env', 'TOWER_OAUTH_TOKEN') | default('')
+        )
+      )
+    )
+  }}
+
+# List of components to query by default
+aap_api_gather_components:
+  - controller
+  - hub
+  - gateway
+  - eda # Add 'eda' here or via extra-vars to query it
+
+# Destination directory on the control node for saved API outputs
+aap_api_gather_dest: "/tmp/aap_api_gathers"
+
+# Cleanup options
+# Clean up old JSON files from previous runs before gathering new data
+aap_api_gather_cleanup_json: true
+# Clean up old archive files (tarballs) from previous runs
+# Note: This is disabled by default to preserve archives for case uploads
+aap_api_gather_cleanup_archives: false
+
+# Validate SSL/TLS certificates
+# Priority: extra_vars (aap_validate_certs) > AAP_VALIDATE_CERTS > CONTROLLER_VERIFY_SSL > TOWER_VERIFY_SSL
+aap_api_gather_aap_validate_certs: >-
+  {{
+    (
+      aap_validate_certs | default(
+        lookup('env', 'AAP_VALIDATE_CERTS') | default(
+          lookup('env', 'CONTROLLER_VERIFY_SSL') | default(
+            lookup('env', 'TOWER_VERIFY_SSL') | default('true')
+          )
+        )
+      )
+    ) | bool
+  }}
+
+# Pagination and query parameter configuration
+# Endpoint-specific configuration is defined in vars/main.yml
+# These are default values used when endpoints don't have specific configuration
+
+# Default maximum number of pages to fetch per endpoint (prevents excessive pagination)
+# Set to 0 or null to disable limits (fetch all pages)
+# Individual endpoints can override this in vars/main.yml
+aap_api_gather_max_pages:
+  default: 10
+
+# Enable/disable automatic query parameter injection
+# If true, query parameters from endpoint config in vars/main.yml will be automatically added
+# If false, endpoints are queried as-is
+aap_api_gather_use_query_params: true
+
+# Enable/disable pagination limits
+# If true, max_pages limits (from endpoint config or defaults) will be enforced
+# If false, all pages will be fetched (may be very slow for high-volume endpoints)
+aap_api_gather_enforce_max_pages: true
+
+# Generate static HTML browser (no JavaScript) for case viewer compatibility
+# Only generated when both this AND upload are true
+# Set to false to skip static file generation even when uploading
+# DISABLED: Currently disabled due to navigation issues in case viewer iframe
+aap_api_gather_generate_static_browser: false
+...

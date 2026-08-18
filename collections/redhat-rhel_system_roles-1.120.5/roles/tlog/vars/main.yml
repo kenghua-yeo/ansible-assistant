@@ -1,0 +1,43 @@
+---
+__tlog_packages:
+  - tlog
+  - sssd
+  - authselect
+__tlog_cockpit_packages:
+  - cockpit-session-recording
+__tlog_writer: journal
+__tlog_sssd_conf: /etc/sssd/sssd.conf
+# yamllint disable-line rule:line-length
+__tlog_sssd_session_recording_conf: >-
+  /etc/sssd/conf.d/sssd-session-recording.conf
+__tlog_rec_session_conf: /etc/tlog/tlog-rec-session.conf
+
+# ansible_facts required by the role
+__tlog_required_facts:
+  - distribution
+  - distribution_major_version
+  - distribution_version
+  - os_family
+
+# the subsets of ansible_facts that need to be gathered in case any of the
+# facts in required_facts is missing; see the documentation of
+# the 'gather_subset' parameter of the 'setup' module
+__tlog_required_facts_subsets: "{{ ['!all', '!min'] + __tlog_required_facts }}"
+
+# BEGIN - DO NOT EDIT THIS BLOCK - rh distros variables
+# Ansible distribution identifiers that the role treats like RHEL
+__tlog_rh_distros:
+  - AlmaLinux
+  - CentOS
+  - RedHat
+  - Rocky
+
+# Same as above but includes Fedora
+__tlog_rh_distros_fedora: "{{ __tlog_rh_distros + ['Fedora'] }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone
+__tlog_is_rh_distro: "{{ ansible_facts['distribution'] in __tlog_rh_distros }}"
+
+# Use this in conditionals to check if distro is Red Hat or clone, or Fedora
+__tlog_is_rh_distro_fedora: "{{ ansible_facts['distribution'] in __tlog_rh_distros_fedora }}"
+# END - DO NOT EDIT THIS BLOCK - rh distros variables

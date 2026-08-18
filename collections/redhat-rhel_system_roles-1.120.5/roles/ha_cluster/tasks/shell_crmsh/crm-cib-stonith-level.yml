@@ -1,0 +1,53 @@
+# SPDX-License-Identifier: MIT
+---
+# Verify if Shadow CIB already contains fencing_topology.
+# crmsh has only one object fencing_topology so all levels
+# are created together.
+- name: Verify if fencing_topology is already present
+  ansible.builtin.command:
+    cmd: crm -c {{ __ha_cluster_crm_shadow }} configure show fencing_topology
+  register: __ha_cluster_resource_status
+  changed_when: false
+  failed_when: false
+
+# Delete fencing_topology in Shadow CIB to avoid errors during cibadmin patch.
+- name: Delete clone if it is already present
+  ansible.builtin.command:
+    cmd: >-
+      crm --force -c {{ __ha_cluster_crm_shadow }}
+      configure delete fencing_topology
+  when: __ha_cluster_resource_status.rc == 0
+  check_mode: false
+  changed_when: not ansible_check_mode
+
+# Yes command will skip all prompts, resulting in rc>0
+# exit $? reveals return code of crm, which is masked by yes
+- name: Configure fencing_topology
+  ansible.builtin.shell:
+    cmd: |
+      yes 'n' | crm -c {{ __ha_cluster_crm_shadow }} \
+      configure fencing_topology \
+      {% for stonith_level in ha_cluster_stonith_levels -%}
+        {% if stonith_level.target is defined %}
+          {{ stonith_level.target | quote }}: \
+        {% elif stonith_level.target_pattern is defined %}
+          regexp%{{ stonith_level.target_pattern | quote }}: \
+        {% endif %}
+        {% for resource_id in stonith_level.resource_ids %}
+          {{ resource_id | quote }} \
+        {% endfor %}
+      {% endfor %}
+      ;exit $?
+  check_mode: false
+  changed_when: not ansible_check_mode
+  ignore_errors: true
+  register: __ha_cluster_crmsh_output
+
+- name: Display crm command error details
+  ansible.builtin.fail:
+    msg:
+      - "{{ __ha_cluster_crmsh_output.stderr_lines }}"
+      - "{{ __ha_cluster_crmsh_output.stdout_lines }}"
+  when:
+    - __ha_cluster_crmsh_output is defined
+    - __ha_cluster_crmsh_output.rc != 0

@@ -1,0 +1,49 @@
+---
+- name: Determine if system is booted with systemd
+  when: __firewall_is_booted is not defined
+  block:
+    - name: Run systemctl
+    # noqa command-instead-of-module
+      command: systemctl is-system-running
+      register: __is_system_running
+      changed_when: false
+      failed_when: false
+
+    - name: Require installed systemd
+      fail:
+        msg: "Error: This role requires systemd to be installed."
+      when: '"No such file or directory" in __is_system_running.msg | d("")'
+
+    - name: Set flag to indicate that systemd runtime operations are available
+      set_fact:
+      # see https://www.man7.org/linux/man-pages/man1/systemctl.1.html#:~:text=is-system-running%20output
+        __firewall_is_booted: "{{ __is_system_running.stdout != 'offline' }}"
+
+- name: Install firewalld
+  package:
+    name: "{{ __firewall_packages_base + __firewall_packages_extra }}"
+    state: present
+    use: "{{ (__firewall_is_ostree | d(false)) | ternary('redhat.rhel_system_roles.rhel_rpm_ostree', omit) }}"
+  register: firewall_package_result
+
+- name: Handle reboot for transactional update systems
+  when:
+    - __firewall_is_transactional | d(false)
+    - firewall_package_result is changed
+  block:
+    - name: Notify user that reboot is needed to apply changes
+      debug:
+        msg: >
+          Reboot required to apply changes due to transactional updates.
+
+    - name: Reboot transactional update systems
+      reboot:
+        msg: Rebooting the system to apply transactional update changes.
+      when: firewall_transactional_update_reboot_ok | bool
+
+    - name: Fail if reboot is needed and not set
+      fail:
+        msg: >
+          Reboot is required but not allowed. Please set 'firewall_transactional_update_reboot_ok' to proceed.
+      when:
+        - firewall_transactional_update_reboot_ok is none

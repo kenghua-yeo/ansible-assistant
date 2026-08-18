@@ -1,0 +1,167 @@
+# SPDX-License-Identifier: MIT
+---
+- name: Ensure ansible_facts used by role
+  setup:
+    gather_subset: "{{ __required_facts }}"
+  when: __required_facts | difference(ansible_facts.keys() | list) | length > 0
+  vars:
+    __required_facts:
+      - distribution
+      - distribution_major_version
+      - os_family
+
+- name: Support for user units only available in EL7 and later
+  fail:
+    msg: >
+      User units not supported for {{ ansible_facts["distribution"] }} version
+      {{ ansible_facts["distribution_major_version"] }} - support is only
+      available on EL8 and later
+  when:
+    - ansible_facts["os_family"] == "RedHat"
+    - ansible_facts["distribution_major_version"] is version("8", "<")
+    - __has_user_units | bool
+    - systemd_fail_if_too_old | bool
+  vars:
+    __has_user_units: "{{ __systemd_all_units | select('mapping') | selectattr('user', 'defined') | rejectattr('user', 'match', '^root$') | list | length > 0 }}"
+
+- name: Support for user units only available in EL7 and later
+  meta: end_host
+  when:
+    - ansible_facts["os_family"] == "RedHat"
+    - ansible_facts["distribution_major_version"] is version("8", "<")
+    - __has_user_units | bool
+    - not systemd_fail_if_too_old
+  vars:
+    __has_user_units: "{{ __systemd_all_units | select('mapping') | selectattr('user', 'defined') | rejectattr('user', 'match', '^root$') | list | length > 0 }}"
+
+- name: Determine if system is ostree and set flag
+  when: not __systemd_is_ostree is defined
+  block:
+    - name: Check if system is ostree
+      stat:
+        path: /run/ostree-booted
+      register: __ostree_booted_stat
+
+    - name: Set flag to indicate system is ostree
+      set_fact:
+        __systemd_is_ostree: "{{ __ostree_booted_stat.stat.exists }}"
+
+- name: Determine if system is transactional update and set flag
+  when: not __systemd_is_transactional is defined
+  block:
+    - name: Check if transactional-update exists in /sbin
+      stat:
+        path: /sbin/transactional-update
+      register: __transactional_update_stat
+
+    - name: Set flag if transactional-update exists
+      set_fact:
+        __systemd_is_transactional: "{{ __transactional_update_stat.stat.exists }}"
+
+- name: Ensure required packages are installed
+  package:
+    name: "{{ __systemd_packages }}"
+    state: present
+    use: "{{ (__systemd_is_ostree | d(false)) | ternary('redhat.rhel_system_roles.rhel_rpm_ostree', omit) }}"
+  register: systemd_package_result
+
+- name: Handle reboot for transactional update systems
+  when:
+    - __systemd_is_transactional | d(false)
+    - systemd_package_result is changed
+  block:
+    - name: Notify user that reboot is needed to apply changes
+      debug:
+        msg: >
+          Reboot required to apply changes due to transactional updates.
+
+    - name: Reboot transactional update systems
+      reboot:
+        msg: Rebooting the system to apply transactional update changes.
+      when: systemd_transactional_update_reboot_ok | bool
+
+    - name: Fail if reboot is needed and not set
+      fail:
+        msg: >
+          Reboot is required but not allowed. Please set 'systemd_transactional_update_reboot_ok' to proceed.
+      when:
+        - systemd_transactional_update_reboot_ok is none
+
+- name: Reset __systemd_user_info
+  set_fact:
+    __systemd_user_info: {}
+
+- name: Manage files and templates and their directories
+  include_tasks: manage_unit_files.yml
+  vars:
+    __systemd_list_name: "{{ managed_unit_files }}"
+  loop_control:
+    loop_var: managed_unit_files
+  loop:
+    - systemd_unit_files
+    - systemd_unit_file_templates
+    - systemd_dropins
+
+# handle reload for system and users that had changed files
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+    scope: "{{ 'system' if item == 'root' else 'user' }}"
+  loop: "{{ __users_with_changes }}"
+  become: true
+  become_user: "{{ item }}"
+  environment:
+    XDG_RUNTIME_DIR: "{{ __systemd_user_info[item]['xdg_dir'] }}"
+  vars:
+    all_results: "{{ __systemd_unit_files_result.get('results', []) + __systemd_unit_file_templates_result.get('results', []) + __systemd_unit_files_absent_result.get('results', []) }}"
+    __users_with_changes: "{{ all_results | selectattr('changed', 'defined') | selectattr('changed') | map(attribute='invocation') | map(attribute='module_args') | map(attribute='owner') | unique | list }}"
+
+- name: Manage units
+  include_tasks: manage_units.yml
+  vars:
+    __systemd_list_name: "{{ managed_units.name }}"
+    __systemd_state: "{{ managed_units.state | d('') }}"
+    __systemd_enabled: "{{ managed_units.enabled | d('') }}"
+    __systemd_masked: "{{ managed_units.masked | d('') }}"
+  loop_control:
+    loop_var: managed_units
+  loop:
+    - name: systemd_unmasked_units
+      masked: "false"
+    - name: systemd_enabled_units
+      enabled: "true"
+    - name: systemd_started_units
+      state: started
+    - name: systemd_restarted_units
+      state: restarted
+    - name: systemd_reloaded_units
+      state: reloaded
+    - name: systemd_stopped_units
+      state: stopped
+    - name: systemd_masked_units
+      masked: "true"
+    - name: systemd_disabled_units
+      enabled: "false"
+
+- name: DebugBefore
+  debug:
+    msg: facts {{ ansible_facts.systemd_units_user | d({}) | to_nice_json }}
+
+- name: Gather systemd units state for system and user units
+  include_tasks: get_systemd_units_info.yml
+  loop: "{{ __user_info | dict2items }}"
+  loop_control:
+    loop_var: __systemd_units_info
+  vars:
+    __user_info: "{{ __systemd_user_info if __systemd_user_info.keys() | length > 0 else {'root': {'xdg_dir': '/run/user/0'}} }}"
+
+- name: DebugAfter
+  debug:
+    msg: facts {{ ansible_facts.systemd_units_user | d({}) | to_nice_json }}
+
+- name: Set legacy systemd_units output variable
+  set_fact:
+    systemd_units: "{{ ansible_facts['systemd_units'] if 'systemd_units' in ansible_facts else {} }}"
+
+- name: Cancel linger for users if necessary
+  include_tasks: cancel_linger.yml

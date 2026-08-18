@@ -1,0 +1,86 @@
+---
+- name: Migrate webapp
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - vars/main.yaml
+
+  tasks:
+    - name: Fail when 'resource_prefix' is not defined
+      ansible.builtin.fail:
+        msg: resource prefix should be defined as resource_prefix
+      when: resource_prefix is not defined
+
+    - name: Fail when 'dest_region' is not defined
+      ansible.builtin.fail:
+        msg: destination region should be defined as dest_region
+      when: dest_region is not defined
+
+    - name: Get RDS instance info
+      amazon.aws.rds_instance_info:
+        region: "{{ aws_region }}"
+        db_instance_identifier: "{{ rds_identifier }}"
+      register: rds_info
+
+    - name: Fail when no RDS Instance is found
+      ansible.builtin.fail:
+        msg: >-
+          Application not deployed yet into region '{{ aws_region }}',
+          No RDS Instance found with identifier '{{ rds_identifier }}'.
+      when: rds_info.instances | length == 0
+
+    - name: Create snapshot for Database instance
+      amazon.aws.rds_instance_snapshot:
+        region: "{{ aws_region }}"
+        db_snapshot_identifier: "{{ rds_identifier }}-snapshot"
+        db_instance_identifier: "{{ rds_identifier }}"
+        wait: true
+        state: present
+      register: snapshot
+
+    - name: Copy snapshot from source region to destination region
+      amazon.aws.rds_instance_snapshot:
+        db_snapshot_identifier: "{{ rds_identifier }}-snapshot"
+        wait: true
+        source_db_snapshot_identifier: "{{ snapshot.db_snapshot_arn }}"
+        source_region: "{{ aws_region }}"
+        region: "{{ dest_region }}"
+      register: result
+
+    - name: Create resources
+      ansible.builtin.import_tasks: tasks/create.yaml
+      vars:
+        rds_snapshot_arn: "{{ result.db_snapshot_arn }}"
+        region: "{{ dest_region }}"
+
+    - name: Create workers and deploy application
+      when: operation == "create"
+      module_defaults:
+        group/aws:
+          aws_access_key: "{{ aws_access_key | default(omit) }}"
+          aws_secret_key: "{{ aws_secret_key | default(omit) }}"
+          session_token: "{{ security_token | default(omit) }}"
+          region: "{{ dest_region }}"
+      block:
+        - name: Deploy app
+          ansible.builtin.import_role:
+            name: cloud.aws_ops.deploy_flask_app
+          vars:
+            deploy_flask_app_private_subnet_id: "{{ private_subnet.subnet.id }}"
+            deploy_flask_app_vpc_id: "{{ vpc.vpc.id }}"
+            deploy_flask_app_vm_info: "{{ vm_result }}"
+            deploy_flask_app_rds_info: "{{ rds_result }}"
+
+    - name: Delete RDS snapshots from different regions
+      amazon.aws.rds_instance_snapshot:
+        region: "{{ item }}"
+        db_snapshot_identifier: "{{ rds_identifier }}-snapshot"
+        wait: true
+        state: absent
+      with_items:
+        - "{{ dest_region }}"
+        - "{{ aws_region }}"
+
+    - name: Delete instance from source region
+      ansible.builtin.import_tasks: tasks/delete.yaml
+      when: delete_source | default(false) | bool

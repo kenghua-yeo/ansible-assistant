@@ -1,0 +1,10 @@
+---
+__kdump_packages:
+  - iproute2  # for fact gathering for ip facts
+  - kexec-tools
+  - kdump-tools
+  - linux-crashdump
+  - openssh-client
+
+__kdump_conf_file: /etc/default/kdump-tools
+__kdump_service: kdump-tools

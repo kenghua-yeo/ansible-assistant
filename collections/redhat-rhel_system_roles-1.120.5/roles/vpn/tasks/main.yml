@@ -1,0 +1,153 @@
+---
+# yamllint disable rule:line-length
+- name: Set platform/version specific variables
+  include_tasks: tasks/set_vars.yml
+
+- name: Ensure required packages are installed
+  package:
+    name: "{{ __vpn_packages }}"
+    state: present
+    use: "{{ (__vpn_is_ostree | d(false)) | ternary('redhat.rhel_system_roles.rhel_rpm_ostree', omit) }}"
+  tags: packages
+
+- name: Configure firewall
+  include_tasks: firewall.yml
+
+- name: Configure selinux
+  include_tasks: selinux.yml
+
+- name: Controller tasks
+  delegate_to: localhost
+  run_once: true
+  block:
+  # NOTE: Trying to accomplish this without using sudo on the controller
+  # Basically, any task, even package_facts:, will use sudo if using
+  # become=true - so just use "exists" test to check for /usr/bin/openssl
+  # If you really want the role to install openssl on the controller, you must run
+  # ansible with become=true e.g. ansible-playbook --become ...
+    - name: Ensure OpenSSL is installed on the controller
+      package:
+        name: openssl
+        state: present
+      when:
+        - vpn_ensure_openssl | d(true)
+        - not "/usr/bin/openssl" is exists
+
+    - name: Ensure __vpn_connections_fixed is defined and empty
+      set_fact:
+        __vpn_connections_fixed: []
+
+    - name: Add missing fields to tunnel items
+      set_fact:
+        __vpn_connections_fixed: "{{ __vpn_connections_fixed | union([item | combine(fixed_item) | combine(_host_item)]) | list }}"
+      loop: "{{ vpn_connections }}"
+      vars:
+        fixed_item:
+          auth_method: "{{ item.auth_method | d(vpn_auth_method) }}"
+          opportunistic: "{{ item.opportunistic | d(vpn_opportunistic) }}"
+        _hosts: "{{ item.hosts if item.hosts | d({}) | length > 1 else (item.hosts | combine(_host)) if item.hosts | d({}) | length == 1 else {} }}"
+        _host_item: "{{ {'hosts': _hosts} if _hosts | length > 0 else {} }}"
+        _host: "{{ {inventory_hostname: ''} }}"
+      no_log: true
+
+  # any tunnel definition that is not an opportunistic tunnel should have
+  # hosts defined and not be empty
+    - name: Make sure that the hosts list is not empty
+      vars:
+        count_not_opps: "{{ __vpn_connections_fixed | selectattr('opportunistic') | list | length }}"
+        count_has_hosts: "{{ __vpn_connections_fixed | rejectattr('opportunistic') | selectattr('hosts', 'defined') | selectattr('hosts') | list | length }}"
+      fail:
+        msg: list of hosts is empty for one or more tunnels
+      when:
+        - __vpn_connections_fixed | length > 0
+        - count_not_opps == count_has_hosts
+
+    - name: Ensure cert_names are populated when auth_method is cert
+      vars:
+      # noqa jinja[spacing]
+        failure: >-
+          {% for tunnel in __vpn_connections_fixed %}
+          {%   if tunnel.auth_method == 'cert' %}
+          {%     if tunnel.opportunistic | d(vpn_opportunistic) %}
+          {%       for host in ansible_play_hosts %}
+          {%-        if 'cert_name' not in hostvars[host] or hostvars[host].cert_name is none or not hostvars[host].cert_name | trim | length -%}
+          True
+          {%-         endif -%}
+          {%       endfor %}
+          {%     else %}
+          {%       for key, value in tunnel.hosts.items() %}
+          {%         if value is none or 'cert_name' not in value or value.cert_name is none or not value.cert_name | trim | length %}
+          {%-           if 'cert_name' not in hostvars[key] or hostvars[key].cert_name is none or not hostvars[key].cert_name | trim | length -%}
+          True
+          {%-           endif -%}
+          {%         endif %}
+          {%       endfor %}
+          {%     endif %}
+          {%   endif %}
+          {% else %}
+          False
+          {% endfor %}
+      fail:
+        msg: cert_name is missing or empty for one or more hosts in a tunnel
+      when: '"True" in failure'
+
+    - name: Reset __vpn_psks
+      set_fact:
+        __vpn_psks: []
+
+    - name: Get PSKs for each tunnel
+      include_tasks: vpn_get_psks_for_tunnel.yml
+      loop: "{{ __vpn_connections_fixed }}"
+      loop_control:
+        loop_var: tunnel
+        index_var: tunnel_idx
+      no_log: true
+
+# The run_once host might not be the first one in hostvars - we do not have
+# a good way to know which host in hostvars was the run_once, and it might
+# change (i.e. on python2 if a non-stable hash is used for the dict)
+# So, find the values for the first hostvars that has __vpn_psks set
+# and use that value.
+- name: Set psks for hosts
+  no_log: true
+  vars:
+    __vpn_psk_hostvars: "{{ hostvars.values() | selectattr('__vpn_psks', 'defined') | first }}"
+  set_fact:
+    __vpn_psks: "{{ __vpn_psk_hostvars.__vpn_psks }}"
+
+- name: Build host-to-host tunnels
+  vars:
+    tunnels: "{{ __vpn_connections_fixed | rejectattr('opportunistic') | selectattr('hosts', 'contains', inventory_hostname) | map(attribute='hosts') | map('dict2items') | flatten | map(attribute='key') | flatten | reject('match', '^' ~ inventory_hostname ~ '$') | unique | list }}"
+  block:
+    - name: Create ipsec.conf files
+      template:
+        src: "{{ vpn_provider }}-host-to-host.conf.j2"
+        dest: "/etc/ipsec.d/{{ inventory_hostname }}-to-{{ item }}.conf"
+        mode: '0644'
+      loop: "{{ tunnels }}"
+      notify: __vpn_handler_enable_start_vpn
+
+    - name: Check if secrets file already exists
+      stat:
+        path: "/etc/ipsec.d/{{ inventory_hostname }}-to-{{ item }}.secrets"
+      register: secrets
+      loop: "{{ tunnels }}"
+
+    - name: Create ipsec.secrets files
+      no_log: true
+      template:
+        src: "{{ vpn_provider }}-host-to-host.secrets.j2"
+        dest: "/etc/ipsec.d/{{ inventory_hostname }}-to-{{ item.item }}.secrets"
+        mode: '0600'
+      loop: "{{ secrets.results }}"
+      when:
+        - not item.stat.exists or vpn_regen_keys
+      notify: __vpn_handler_enable_start_vpn
+
+- name: Build opportunistic configuration
+  include_tasks: tasks/mesh_conf.yml
+  when: conn.opportunistic | d(vpn_opportunistic)
+  loop: "{{ __vpn_connections_fixed }}"
+  loop_control:
+    loop_var: conn
+  no_log: true

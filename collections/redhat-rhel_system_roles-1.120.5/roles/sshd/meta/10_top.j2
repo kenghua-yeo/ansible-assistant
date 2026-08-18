@@ -1,0 +1,51 @@
+{% macro render_option(key,value,indent=false) %}
+{%   if value is defined and value is not none %}
+{%     if value is sameas true %}
+{%       if indent %}  {% endif %}
+{{ key }} yes
+{%     elif value is sameas false %}
+{%       if indent %}  {% endif %}
+{{ key }} no
+{%     elif value is string or value is number %}
+{%       if indent %}  {% endif %}
+{{ key }} {{ value | string }}
+{%     else %}
+{%       for i in value %}
+{%         if i is none %}
+{{- '' -}}
+{%         else %}
+{%           if indent %}  {% endif %}
+{{ key }} {{ i | string }}
+{%         endif %}
+{%       endfor %}
+{%     endif %}
+{%   else %}
+{{- '' -}}
+{%   endif %}
+{% endmacro %}
+{% macro body_option(key,override) %}
+{%   if override is defined %}
+{{     render_option(key, override) -}}
+{%   elif __sshd_config[key] is defined %}
+{{     render_option(key, __sshd_config[key]) -}}
+{%   elif sshd_main_config_file is not none
+        and sshd_config_file | dirname == sshd_main_config_file ~ '.d' %}
+{#     Do not use the defaults from main file to avoid recursion #}
+{{- '' -}}
+{%   elif __sshd_defaults[key] is defined and not sshd_skip_defaults %}
+{%     if key == 'HostKey' and __sshd_fips_mode %}
+{{       render_option(key, __sshd_defaults[key] | difference(__sshd_hostkeys_nofips)) -}}
+{%     else %}
+{{       render_option(key, __sshd_defaults[key]) -}}
+{%     endif %}
+{%   else %}
+{{- '' -}}
+{%   endif %}
+{% endmacro %}
+{% macro match_block(match_list) %}
+{%   if match_list["Condition"] is defined %}
+{%     set match_list = [ match_list ]%}
+{%   endif %}
+{%   if match_list is iterable %}
+{%     for match in match_list %}
+Match {{ match["Condition"] }}

@@ -1,0 +1,25 @@
+---
+namespace: infra
+name: rhel_ops
+version: 1.0.0
+authors:
+  - Ansible
+description: A collection of roles for RHEL operations including CIS security benchmarks for RHEL 9 and RHEL 10.
+documentation: ''
+homepage: ''
+issues: ''
+license_file: LICENSE
+readme: README.md
+repository: ''
+tags:
+  - rhel
+  - security
+  - compliance
+  - cis
+  - hardening
+dependencies: {}
+build_ignore:
+  - '.tox'
+  - '.git'
+  - '.github'
+  - '.gitignore'

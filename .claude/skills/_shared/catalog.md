@@ -307,6 +307,20 @@ A role to troubleshoot RDS connectivity from an EC2 instance.
 
 _(no meta/argument_specs.yml - variables undocumented in machine-readable form; check README.md or treat as a candidate for backfilling one)_
 
+## infra.rhel_ops
+
+### `infra.rhel_ops.rhel10_cis_server_l1`
+
+Ansible Role for CIS Red Hat Enterprise Linux 10 Benchmark for Level 1 - Server
+
+_(no meta/argument_specs.yml - variables undocumented in machine-readable form; check README.md or treat as a candidate for backfilling one)_
+
+### `infra.rhel_ops.rhel9_cis_server_l1`
+
+Ansible Role for CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server
+
+_(no meta/argument_specs.yml - variables undocumented in machine-readable form; check README.md or treat as a candidate for backfilling one)_
+
 ## infra.support_assist
 
 ### `infra.support_assist.aap_api_gather`

@@ -1,0 +1,36 @@
+galaxy_info:
+  role_name: rhel9_cis_server_l1
+  author: ComplianceAsCode development team
+  description: CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server
+
+  issue_tracker_url: https://github.com/ComplianceAsCode/content/issues
+
+  license: BSD-3-Clause
+
+  min_ansible_version: 2.9
+
+  platforms:
+  - name: EL
+    versions:
+    - 9
+
+  galaxy_tags:
+  - system
+  - hardening
+  - openscap
+  - ssg
+  - scap
+  - security
+  - compliance
+  - complianceascode
+  - redhatofficial
+  - redhat
+  - rhel9
+  - cisserverl1
+
+
+collections:
+  - community.general
+  - ansible.posix
+
+dependencies: []
